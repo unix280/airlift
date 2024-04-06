@@ -100,29 +100,40 @@ public class TestBootstrap
     @Test
     public void testEnvironmentVariableReplacement()
     {
-        Map<String, String> properties = new HashMap<>();
-        Map<String, String> environment = new HashMap<>();
+        Map<String, String> properties = new ImmutableMap.Builder<String, String>()
+                // Literal value
+                .put("no-change", "no-change")
+                // Correct values with defined environment variables
+                .put("variable", "${ENV:VARIABLE}")
+                .put("mixed-variable", "mixed-${ENV:VARIABLE}")
+                .put("mixed-additional-variable", "mixed-${ENV:ADDITIONAL}-${ENV:VARIABLE}")
+                // Broken values with undefined environment variables
+                .put("missing-variable", "${ENV:MISSING}")
+                .put("mixed-missing-variable", "mixed-${ENV:MISSING}")
+                .put("mixed-missing-additional-variable", "mixed-${ENV:MISSING}-${ENV:VARIABLE}")
+                .put("mixed-missing-repeated-variable", "mixed-${ENV:MISSING}-${ENV:MISSING}-${ENV:VARIABLE}")
+                .put("mixed-missing-many-variables", "mixed-${ENV:MISSING_1}-${ENV:MISSING_2}-${ENV:VARIABLE}")
+                .build();
+        Map<String, String> environment = new ImmutableMap.Builder<String, String>()
+                .put("VARIABLE", "variable")
+                .put("ADDITIONAL", "additional")
+                .build();
         Map<String, String> errors = new HashMap<>();
-
-        properties.put("expected", "${ENV:EXPECTED}");
-        properties.put("invalid", "${ENV:INVALID}");
-        properties.put("no-replacement", "no-replacement");
-        properties.put("mixed-no-change", "${ENV:INVALID}!");
-
-        environment.put("EXPECTED", "expected-replacement");
 
         Map<String, String> results = Bootstrap.replaceWithEnvironmentVariables(properties, environment, errors::put);
 
-        assertEquals(results.get("expected"), "expected-replacement");
-        assertEquals(results.get("no-replacement"), "no-replacement");
-        assertEquals(results.get("mixed-no-change"), "${ENV:INVALID}!");
+        assertEquals(results.size(), 4);
+        assertEquals(results.get("no-change"), "no-change");
+        assertEquals(results.get("variable"), "variable");
+        assertEquals(results.get("mixed-variable"), "mixed-variable");
+        assertEquals(results.get("mixed-additional-variable"), "mixed-additional-variable");
 
-        assertEquals(3, results.size());
-        assertEquals(1, errors.size());
-
-        assertEquals(
-                errors.get("invalid"),
-                "Configuration property `invalid` references `INVALID`, an undefiled environment variable.");
+        assertEquals(errors.size(), 5);
+        assertEquals(errors.get("missing-variable"), "Configuration property `missing-variable` references undefined environment variable(s): [MISSING]");
+        assertEquals(errors.get("mixed-missing-variable"), "Configuration property `mixed-missing-variable` references undefined environment variable(s): [MISSING]");
+        assertEquals(errors.get("mixed-missing-additional-variable"), "Configuration property `mixed-missing-additional-variable` references undefined environment variable(s): [MISSING]");
+        assertEquals(errors.get("mixed-missing-repeated-variable"), "Configuration property `mixed-missing-repeated-variable` references undefined environment variable(s): [MISSING]");
+        assertEquals(errors.get("mixed-missing-many-variables"), "Configuration property `mixed-missing-many-variables` references undefined environment variable(s): [MISSING_1, MISSING_2]");
     }
 
     public static class Instance {}

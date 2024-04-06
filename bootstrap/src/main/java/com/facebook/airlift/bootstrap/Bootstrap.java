@@ -30,6 +30,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -326,24 +327,27 @@ public class Bootstrap
     {
         SortedMap<String, String> results = new TreeMap<>();
         properties.forEach((key, value) -> {
-            Matcher result = ENV_PATTERN.matcher(value);
-            if (result.matches()) {
-                String variableName = result.group(1);
-                String envValue = environment.get(variableName);
-
-                if (envValue == null) {
-                    String errorMessage = String.format(
-                            "Configuration property `%s` references `%s`, an undefiled environment variable.",
-                            key,
-                            variableName);
-                    onError.accept(key, errorMessage);
+            // TODO: Replace with Matcher.replaceAll(Function) or replace StringBuffer with StringBuilder after upgrade to Java 9+
+            StringBuffer result = new StringBuffer();
+            ImmutableSet.Builder<String> undefinedBuilder = ImmutableSet.builderWithExpectedSize(0);
+            Matcher matcher = ENV_PATTERN.matcher(value);
+            while (matcher.find()) {
+                String variable = matcher.group(1);
+                String variableValue = environment.get(variable);
+                if (variableValue == null) {
+                    undefinedBuilder.add(variable);
                 }
                 else {
-                    results.put(key, envValue);
+                    matcher.appendReplacement(result, variableValue);
                 }
             }
+            ImmutableSet<String> undefined = undefinedBuilder.build();
+            matcher.appendTail(result);
+            if (undefined.isEmpty()) {
+                results.put(key, result.toString());
+            }
             else {
-                results.put(key, value);
+                onError.accept(key, String.format("Configuration property `%s` references undefined environment variable(s): %s", key, undefined));
             }
         });
         return results;
