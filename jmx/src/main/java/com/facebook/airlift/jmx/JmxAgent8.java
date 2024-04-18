@@ -18,7 +18,6 @@ package com.facebook.airlift.jmx;
 import com.facebook.airlift.log.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.HostAndPort;
-import sun.management.Agent;
 import sun.management.jmxremote.ConnectorBootstrap;
 import sun.rmi.server.UnicastRef;
 
@@ -40,6 +39,8 @@ class JmxAgent8
         implements JmxAgent
 {
     private static final Logger log = Logger.get(JmxAgent.class);
+
+    private static final Class<?> AGENT_CLASS = getAgentClass();
 
     private final JMXServiceURL url;
 
@@ -76,7 +77,7 @@ class JmxAgent8
             System.setProperty("com.sun.management.jmxremote.ssl", "false");
 
             try {
-                Agent.startAgent();
+                AGENT_CLASS.getMethod("startAgent").invoke(null);
             }
             catch (Exception e) {
                 throwIfUnchecked(e);
@@ -111,7 +112,7 @@ class JmxAgent8
         RemoteObject registry;
         int actualRegistryPort;
         try {
-            jmxServer = getField(Agent.class, JMXConnectorServer.class, "jmxServer");
+            jmxServer = getField(AGENT_CLASS, JMXConnectorServer.class, "jmxServer");
             registry = getField(ConnectorBootstrap.class, RemoteObject.class, "registry");
 
             if (jmxServer == null || registry == null) {
@@ -158,6 +159,16 @@ class JmxAgent8
         }
         catch (ClassCastException e) {
             throw new IllegalArgumentException(format("Field %s in class %s is not of type %s, actual: %s", name, clazz.getName(), returnType.getName(), field.getType().getName()), e);
+        }
+    }
+
+    private static Class<?> getAgentClass()
+    {
+        try {
+            return Class.forName("sun.management.Agent");
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
