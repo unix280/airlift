@@ -228,10 +228,11 @@ public class TestJsonCodec
         JsonCodec<ImmutablePerson> jsonCodec = jsonCodec(ImmutablePerson.class);
         ImmutablePerson person = new ImmutablePerson(Strings.repeat("a", 1000), false);
 
+        int jsonNoLimitLength = jsonCodec.toJson(person).length();
+
         assertFalse(jsonCodec.toJsonWithLengthLimit(person, 0).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(person, 1000).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(person, 1035).isPresent());
-        assertTrue(jsonCodec.toJsonWithLengthLimit(person, 1036).isPresent());
+        assertFalse(jsonCodec.toJsonWithLengthLimit(person, jsonNoLimitLength - 1).isPresent());
+        assertTrue(jsonCodec.toJsonWithLengthLimit(person, jsonNoLimitLength).isPresent());
     }
 
     @Test
@@ -240,10 +241,11 @@ public class TestJsonCodec
         JsonCodec<ImmutablePerson> jsonCodec = jsonCodec(ImmutablePerson.class);
         ImmutablePerson person = new ImmutablePerson(Strings.repeat("\u0158", 1000), false);
 
+        int jsonNoLimitLength = jsonCodec.toJson(person).length();
+
         assertFalse(jsonCodec.toJsonWithLengthLimit(person, 0).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(person, 1000).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(person, 1035).isPresent());
-        assertTrue(jsonCodec.toJsonWithLengthLimit(person, 1036).isPresent());
+        assertFalse(jsonCodec.toJsonWithLengthLimit(person, jsonNoLimitLength - 1).isPresent());
+        assertTrue(jsonCodec.toJsonWithLengthLimit(person, jsonNoLimitLength).isPresent());
     }
 
     @Test
@@ -253,9 +255,10 @@ public class TestJsonCodec
         ImmutablePerson person = new ImmutablePerson(Strings.repeat("a", 1000), false);
         List<ImmutablePerson> people = Collections.nCopies(10, person);
 
+        int jsonNoLimitLength = jsonCodec.toJson(people).length();
+
         assertFalse(jsonCodec.toJsonWithLengthLimit(people, 0).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(people, 5000).isPresent());
-        assertFalse(jsonCodec.toJsonWithLengthLimit(people, 10381).isPresent());
-        assertTrue(jsonCodec.toJsonWithLengthLimit(people, 10382).isPresent());
+        assertFalse(jsonCodec.toJsonWithLengthLimit(people, jsonNoLimitLength - 1).isPresent());
+        assertTrue(jsonCodec.toJsonWithLengthLimit(people, jsonNoLimitLength).isPresent());
     }
 }
