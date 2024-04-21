@@ -68,22 +68,18 @@ public class TestConfigurationLoader
             throws IOException
     {
         final File file = File.createTempFile("config", ".properties", tempDir);
-        PrintStream out = new PrintStream(new FileOutputStream(file));
-        try {
+        try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
             out.print("test: foo");
+
+            System.setProperty("config", file.getAbsolutePath());
+
+            Map<String, String> properties = loadProperties();
+
+            assertEquals(properties.get("test"), "foo");
+            assertEquals(properties.get("config"), file.getAbsolutePath());
+
+            System.getProperties().remove("config");
         }
-        catch (Exception e) {
-            out.close();
-        }
-
-        System.setProperty("config", file.getAbsolutePath());
-
-        Map<String, String> properties = loadProperties();
-
-        assertEquals(properties.get("test"), "foo");
-        assertEquals(properties.get("config"), file.getAbsolutePath());
-
-        System.getProperties().remove("config");
     }
 
     @Test
@@ -91,24 +87,20 @@ public class TestConfigurationLoader
             throws IOException
     {
         final File file = File.createTempFile("config", ".properties", tempDir);
-        PrintStream out = new PrintStream(new FileOutputStream(file));
-        try {
+        try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
             out.println("key1: original");
             out.println("key2: original");
+
+            System.setProperty("config", file.getAbsolutePath());
+            System.setProperty("key1", "overridden");
+
+            Map<String, String> properties = loadProperties();
+
+            assertEquals(properties.get("config"), file.getAbsolutePath());
+            assertEquals(properties.get("key1"), "overridden");
+            assertEquals(properties.get("key2"), "original");
+
+            System.getProperties().remove("config");
         }
-        catch (Exception e) {
-            out.close();
-        }
-
-        System.setProperty("config", file.getAbsolutePath());
-        System.setProperty("key1", "overridden");
-
-        Map<String, String> properties = loadProperties();
-
-        assertEquals(properties.get("config"), file.getAbsolutePath());
-        assertEquals(properties.get("key1"), "overridden");
-        assertEquals(properties.get("key2"), "original");
-
-        System.getProperties().remove("config");
     }
 }
