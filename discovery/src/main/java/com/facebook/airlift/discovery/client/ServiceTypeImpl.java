@@ -15,6 +15,8 @@
  */
 package com.facebook.airlift.discovery.client;
 
+import com.google.inject.internal.Annotations;
+
 import java.lang.annotation.Annotation;
 
 import static java.util.Objects.requireNonNull;
@@ -37,7 +39,7 @@ class ServiceTypeImpl
 
     public String toString()
     {
-        return String.format("@%s(value=%s)", ServiceType.class.getName(), value);
+        return String.format("@%s(value=%s)", ServiceType.class.getName(), Annotations.memberValueString(value));
     }
 
     @Override
