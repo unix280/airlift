@@ -52,11 +52,7 @@ class ServiceTypeImpl
 
         ServiceType that = (ServiceType) o;
 
-        if (!value.equals(that.value())) {
-            return false;
-        }
-
-        return true;
+        return value.equals(that.value());
     }
 
     @Override
