@@ -84,7 +84,6 @@ public class JsonMapper
             InputStream inputStream)
             throws IOException
     {
-        Object object;
         try {
             JsonParser jsonParser = objectMapper.getFactory().createParser(inputStream);
 
@@ -92,14 +91,16 @@ public class JsonMapper
             // mapping, so we need to instruct parser:
             jsonParser.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
 
-            object = objectMapper.readValue(jsonParser, objectMapper.getTypeFactory().constructType(genericType));
+            Object object = objectMapper.readValue(jsonParser, objectMapper.getTypeFactory().constructType(genericType));
+            return object;
         }
-        catch (Exception e) {
-            // We want to handle parsing exceptions differently than regular IOExceptions so just rethrow IOExceptions
-            if (e instanceof IOException && !(e instanceof JsonProcessingException) && !(e instanceof EOFException)) {
-                throw e;
-            }
+        catch (JsonProcessingException | EOFException e) {
+            log.debug(e, "Invalid json for Java type %s", type);
 
+            // Invalid json request. Throwing exception so the response code can be overridden using a mapper.
+            throw new JsonMapperParsingException(type, e);
+        }
+        catch (RuntimeException e) {
             // log the exception at debug so it can be viewed during development
             // Note: we are not logging at a higher level because this could cause a denial of service
             log.debug(e, "Invalid json for Java type %s", type);
@@ -107,7 +108,6 @@ public class JsonMapper
             // Invalid json request. Throwing exception so the response code can be overridden using a mapper.
             throw new JsonMapperParsingException(type, e);
         }
-        return object;
     }
 
     @Override
