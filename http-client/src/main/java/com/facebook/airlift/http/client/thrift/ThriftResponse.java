@@ -8,12 +8,9 @@ import javax.annotation.Nullable;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
 public class ThriftResponse<T>
 {
     private final int statusCode;
-    private final String statusMessage;
     private final String errorMessage;
     private final ListMultimap<HeaderName, String> headers;
     private final T value;
@@ -21,14 +18,12 @@ public class ThriftResponse<T>
 
     ThriftResponse(
             int statusCode,
-            String statusMessage,
             String errorMessage,
             ListMultimap<HeaderName, String> headers,
             T value,
             IllegalArgumentException exception)
     {
         this.statusCode = statusCode;
-        this.statusMessage = requireNonNull(statusMessage, "statusMessage is null");
         this.errorMessage = errorMessage;
         this.headers = headers != null ? ImmutableListMultimap.copyOf(headers) : null;
         this.value = value;
@@ -38,11 +33,6 @@ public class ThriftResponse<T>
     public int getStatusCode()
     {
         return statusCode;
-    }
-
-    public String getStatusMessage()
-    {
-        return statusMessage;
     }
 
     public String getErrorMessage()

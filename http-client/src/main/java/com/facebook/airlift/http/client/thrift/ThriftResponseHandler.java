@@ -69,7 +69,7 @@ public class ThriftResponseHandler<T>
         catch (Exception e) {
             exception = new IllegalArgumentException("Unable to create " + thriftCodec.getType() + " from THRIFT response", e);
         }
-        return new ThriftResponse<>(response.getStatusCode(), response.getStatusMessage(), null, response.getHeaders(), value, exception);
+        return new ThriftResponse<>(response.getStatusCode(), null, response.getHeaders(), value, exception);
     }
 
     private ThriftResponse<T> createErrorResponse(Response response)
@@ -83,7 +83,7 @@ public class ThriftResponseHandler<T>
         };
         try {
             String errorMessage = byteSource.asCharSource(StandardCharsets.UTF_8).read();
-            return new ThriftResponse<>(response.getStatusCode(), response.getStatusMessage(), errorMessage, response.getHeaders(), null, null);
+            return new ThriftResponse<>(response.getStatusCode(), errorMessage, response.getHeaders(), null, null);
         }
         catch (IOException e) {
             throw new UncheckedIOException(e);
