@@ -212,7 +212,7 @@ public class TestHttpClientConfig
 
     private List<String> getJettyDefaultExcludedCiphers()
     {
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
         return Arrays.asList(sslContextFactory.getExcludeCipherSuites());
     }
 }

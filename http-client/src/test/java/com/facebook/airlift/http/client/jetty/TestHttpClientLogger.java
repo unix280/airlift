@@ -360,6 +360,18 @@ public class TestHttpClientLogger
         }
 
         @Override
+        public Request tag(Object o)
+        {
+            return null;
+        }
+
+        @Override
+        public Object getTag()
+        {
+            return null;
+        }
+
+        @Override
         public Request attribute(String name, Object value)
         {
             throw new UnsupportedOperationException();
@@ -537,6 +549,12 @@ public class TestHttpClientLogger
         public Request onResponseContentAsync(Response.AsyncContentListener listener)
         {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Request onResponseContentDemanded(Response.DemandedContentListener demandedContentListener)
+        {
+            return null;
         }
 
         @Override

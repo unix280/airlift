@@ -183,7 +183,7 @@ public class TestHttpServerCipher
     private static HttpClient createClientIncludeCiphers(String... includedCipherSuites)
             throws Exception
     {
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setIncludeCipherSuites(includedCipherSuites);
         // Since Jetty 9.4.12 the list of excluded cipher suites includes "^TLS_RSA_.*$" by default.
         // We reset that list here to enable use of those cipher suites.
