@@ -2,10 +2,10 @@ package com.facebook.airlift.http.client.spnego;
 
 import com.facebook.airlift.http.client.KerberosNameType;
 import com.facebook.airlift.log.Logger;
+import com.facebook.airlift.units.Duration;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.sun.security.auth.module.Krb5LoginModule;
-import io.airlift.units.Duration;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 import org.eclipse.jetty.client.api.Authentication;

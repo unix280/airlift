@@ -2,7 +2,7 @@ package com.facebook.airlift.http.client.jetty;
 
 import com.facebook.airlift.http.client.GatheringByteArrayInputStream;
 import com.facebook.airlift.http.client.ResponseTooLargeException;
-import io.airlift.units.DataSize;
+import com.facebook.airlift.units.DataSize;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.http.HttpHeader;
@@ -14,10 +14,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.facebook.airlift.units.DataSize.Unit.KILOBYTE;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static io.airlift.units.DataSize.Unit.KILOBYTE;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;

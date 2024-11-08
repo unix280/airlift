@@ -13,11 +13,11 @@
  */
 package com.facebook.airlift.http.server;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;

@@ -13,7 +13,7 @@
  */
 package com.facebook.airlift.stats;
 
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 
 import javax.annotation.concurrent.GuardedBy;
 

@@ -15,8 +15,8 @@
  */
 package com.facebook.airlift.discovery.client;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

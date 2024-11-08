@@ -19,10 +19,10 @@ import com.facebook.airlift.bootstrap.Bootstrap;
 import com.facebook.airlift.bootstrap.LifeCycleManager;
 import com.facebook.airlift.http.client.jetty.JettyHttpClient;
 import com.facebook.airlift.tracetoken.TraceTokenModule;
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import io.airlift.units.Duration;
 import org.testng.annotations.Test;
 
 import javax.inject.Qualifier;

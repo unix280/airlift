@@ -17,8 +17,8 @@ package com.facebook.airlift.sample;
 
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.LegacyConfig;
+import com.facebook.airlift.units.Duration;
 import com.google.common.base.Preconditions;
-import io.airlift.units.Duration;
 
 import javax.validation.constraints.NotNull;
 

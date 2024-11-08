@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class MaxDurationValidator
-        implements ConstraintValidator<MaxDuration, Duration>
+public class MinDurationValidator
+        implements ConstraintValidator<MinDuration, Duration>
 {
-    private Duration max;
+    private Duration min;
 
     @Override
-    public void initialize(MaxDuration duration)
+    public void initialize(MinDuration duration)
     {
-        this.max = Duration.valueOf(duration.value());
+        this.min = Duration.valueOf(duration.value());
     }
 
     @Override
     public boolean isValid(Duration duration, ConstraintValidatorContext context)
     {
-        return duration == null || duration.compareTo(max) <= 0;
+        return duration == null || duration.compareTo(min) >= 0;
     }
 
     @Override
     public String toString()
     {
-        return "max:" + max;
+        return "min:" + min;
     }
 }

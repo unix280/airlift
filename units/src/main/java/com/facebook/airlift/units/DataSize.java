@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -22,8 +22,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.airlift.units.Preconditions.checkArgument;
-import static io.airlift.units.Preconditions.checkState;
+import static com.facebook.airlift.units.Preconditions.checkArgument;
+import static com.facebook.airlift.units.Preconditions.checkState;
 import static java.lang.Math.floor;
 import static java.util.Objects.requireNonNull;
 

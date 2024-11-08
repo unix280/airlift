@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.Payload;
 
@@ -20,12 +20,12 @@ import java.lang.annotation.Annotation;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
-class MockMaxDataSize
-        implements MaxDataSize
+class MockMinDataSize
+        implements MinDataSize
 {
     private final DataSize dataSize;
 
-    public MockMaxDataSize(DataSize dataSize)
+    public MockMinDataSize(DataSize dataSize)
     {
         this.dataSize = requireNonNull(dataSize, "dataSize is null");
     }
@@ -57,6 +57,6 @@ class MockMaxDataSize
     @Override
     public Class<? extends Annotation> annotationType()
     {
-        return MaxDuration.class;
+        return MinDataSize.class;
     }
 }

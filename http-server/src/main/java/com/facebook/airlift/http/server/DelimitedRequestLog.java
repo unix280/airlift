@@ -25,7 +25,7 @@ import ch.qos.logback.core.util.FileSize;
 import com.facebook.airlift.event.client.EventClient;
 import com.facebook.airlift.log.Logger;
 import com.facebook.airlift.tracetoken.TraceTokenManager;
-import io.airlift.units.DataSize;
+import com.facebook.airlift.units.DataSize;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.facebook.airlift.http.server.HttpRequestEvent.createHttpRequestEvent;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class DelimitedRequestLog

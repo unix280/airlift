@@ -1,6 +1,4 @@
 /*
- * Copyright 2010 Proofpoint, Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -33,12 +31,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = MinDurationValidator.class)
-public @interface MinDuration
+@Constraint(validatedBy = MinDataSizeValidator.class)
+public @interface MinDataSize
 {
     String value();
 
-    String message() default "{io.airlift.units.MinDuration.message}";
+    String message() default "{com.facebook.airlift.units.MinDataSize.message}";
 
     Class<?>[] groups() default {};
 

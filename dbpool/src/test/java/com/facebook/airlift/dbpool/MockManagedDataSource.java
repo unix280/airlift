@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.dbpool;
 
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 
 import javax.sql.PooledConnection;
 

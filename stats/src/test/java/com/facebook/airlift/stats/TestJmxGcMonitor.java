@@ -1,6 +1,6 @@
 package com.facebook.airlift.stats;
 
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 import org.testng.annotations.Test;
 
 import static com.facebook.airlift.testing.Assertions.assertGreaterThanOrEqual;

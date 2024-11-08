@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import com.google.common.collect.ImmutableList;
 import io.airlift.json.JsonCodec;
@@ -23,14 +23,14 @@ import org.testng.annotations.Test;
 import java.util.Locale;
 
 import static io.airlift.testing.EquivalenceTester.comparisonTester;
-import static io.airlift.units.DataSize.Unit.BYTE;
-import static io.airlift.units.DataSize.Unit.GIGABYTE;
-import static io.airlift.units.DataSize.Unit.KILOBYTE;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
-import static io.airlift.units.DataSize.Unit.PETABYTE;
-import static io.airlift.units.DataSize.Unit.TERABYTE;
-import static io.airlift.units.DataSize.succinctBytes;
-import static io.airlift.units.DataSize.succinctDataSize;
+import static com.facebook.airlift.units.DataSize.Unit.BYTE;
+import static com.facebook.airlift.units.DataSize.Unit.GIGABYTE;
+import static com.facebook.airlift.units.DataSize.Unit.KILOBYTE;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
+import static com.facebook.airlift.units.DataSize.Unit.PETABYTE;
+import static com.facebook.airlift.units.DataSize.Unit.TERABYTE;
+import static com.facebook.airlift.units.DataSize.succinctBytes;
+import static com.facebook.airlift.units.DataSize.succinctDataSize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 import static org.assertj.core.data.Percentage.withPercentage;

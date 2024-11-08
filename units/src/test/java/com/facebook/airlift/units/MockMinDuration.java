@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.Payload;
 
 import java.lang.annotation.Annotation;
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
-class MockMaxDuration
-        implements MaxDuration
+class MockMinDuration
+        implements MinDuration
 {
     private final Duration duration;
 
-    public MockMaxDuration(Duration duration)
+    public MockMinDuration(Duration duration)
     {
         this.duration = duration;
     }
@@ -57,6 +57,6 @@ class MockMaxDuration
     @Override
     public Class<? extends Annotation> annotationType()
     {
-        return MaxDuration.class;
+        return MinDuration.class;
     }
 }

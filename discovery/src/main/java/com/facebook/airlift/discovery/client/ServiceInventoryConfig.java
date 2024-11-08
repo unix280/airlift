@@ -17,7 +17,7 @@ package com.facebook.airlift.discovery.client;
 
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.ConfigDescription;
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 
 import javax.validation.constraints.NotNull;
 

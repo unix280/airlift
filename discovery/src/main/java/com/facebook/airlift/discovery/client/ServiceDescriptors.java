@@ -15,8 +15,8 @@
  */
 package com.facebook.airlift.discovery.client;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
-import io.airlift.units.Duration;
 
 import java.util.List;
 

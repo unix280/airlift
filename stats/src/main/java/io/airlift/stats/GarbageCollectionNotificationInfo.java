@@ -1,7 +1,7 @@
 package com.facebook.airlift.stats;
 
+import com.facebook.airlift.units.DataSize;
 import com.google.common.collect.ImmutableMap;
-import io.airlift.units.DataSize;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
@@ -10,8 +10,8 @@ import java.lang.management.MemoryUsage;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.facebook.airlift.units.DataSize.succinctBytes;
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static io.airlift.units.DataSize.succinctBytes;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 

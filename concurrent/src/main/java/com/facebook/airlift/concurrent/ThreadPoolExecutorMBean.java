@@ -1,7 +1,7 @@
 package com.facebook.airlift.concurrent;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.annotations.Beta;
-import io.airlift.units.Duration;
 import org.weakref.jmx.Managed;
 
 import java.util.concurrent.ThreadPoolExecutor;

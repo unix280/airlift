@@ -16,7 +16,7 @@
 package com.facebook.airlift.dbpool;
 
 import com.facebook.airlift.dbpool.MockConnectionPoolDataSource.MockConnection;
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 import org.testng.annotations.Test;
 
 import javax.sql.ConnectionPoolDataSource;
@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.facebook.airlift.testing.Assertions.assertGreaterThan;
 import static com.facebook.airlift.testing.Assertions.assertInstanceOf;
-import static io.airlift.units.Duration.nanosSince;
+import static com.facebook.airlift.units.Duration.nanosSince;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.testng.Assert.assertEquals;

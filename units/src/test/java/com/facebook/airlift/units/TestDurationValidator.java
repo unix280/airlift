@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import org.apache.bval.jsr.ApacheValidationProvider;
 import org.testng.annotations.Test;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static io.airlift.units.ConstraintValidatorAssert.assertThat;
+import static com.facebook.airlift.units.ConstraintValidatorAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -79,7 +79,7 @@ public class TestDurationValidator
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MinAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant io.airlift.units.MinDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("No compliant com.facebook.airlift.units.MinDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMinAnnotation()))
                 .isInstanceOf(ValidationException.class)
@@ -97,7 +97,7 @@ public class TestDurationValidator
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MaxAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant io.airlift.units.MaxDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("No compliant com.facebook.airlift.units.MaxDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMaxAnnotation()))
                 .isInstanceOf(ValidationException.class)

@@ -15,8 +15,8 @@
  */
 package com.facebook.airlift.dbpool;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.primitives.Ints;
-import io.airlift.units.Duration;
 import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
 
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import static io.airlift.units.Duration.nanosSince;
+import static com.facebook.airlift.units.Duration.nanosSince;
 import static java.lang.Math.ceil;
 
 public abstract class ManagedDataSource

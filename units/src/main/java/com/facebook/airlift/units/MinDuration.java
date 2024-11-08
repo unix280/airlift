@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -33,12 +33,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = MaxDurationValidator.class)
-public @interface MaxDuration
+@Constraint(validatedBy = MinDurationValidator.class)
+public @interface MinDuration
 {
     String value();
 
-    String message() default "{io.airlift.units.MaxDuration.message}";
+    String message() default "{com.facebook.airlift.units.MinDuration.message}";
 
     Class<?>[] groups() default {};
 

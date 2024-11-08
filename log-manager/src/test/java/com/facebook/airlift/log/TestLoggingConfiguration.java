@@ -14,13 +14,13 @@
 package com.facebook.airlift.log;
 
 import com.facebook.airlift.configuration.testing.ConfigAssertions;
+import com.facebook.airlift.units.DataSize;
 import com.google.common.collect.ImmutableMap;
-import io.airlift.units.DataSize;
 import org.testng.annotations.Test;
 
 import java.util.Map;
 
-import static io.airlift.units.DataSize.Unit.KILOBYTE;
+import static com.facebook.airlift.units.DataSize.Unit.KILOBYTE;
 
 @SuppressWarnings("deprecation")
 public class TestLoggingConfiguration

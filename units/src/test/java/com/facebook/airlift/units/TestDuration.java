@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import io.airlift.json.JsonCodec;
 import org.testng.annotations.DataProvider;
@@ -25,8 +25,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static io.airlift.testing.EquivalenceTester.comparisonTester;
-import static io.airlift.units.Duration.succinctDuration;
-import static io.airlift.units.Duration.succinctNanos;
+import static com.facebook.airlift.units.Duration.succinctDuration;
+import static com.facebook.airlift.units.Duration.succinctNanos;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;

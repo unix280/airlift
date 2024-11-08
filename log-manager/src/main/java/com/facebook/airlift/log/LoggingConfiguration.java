@@ -17,10 +17,10 @@ package com.facebook.airlift.log;
 
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.LegacyConfig;
-import io.airlift.units.DataSize;
+import com.facebook.airlift.units.DataSize;
 
-import static io.airlift.units.DataSize.Unit.BYTE;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
+import static com.facebook.airlift.units.DataSize.Unit.BYTE;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 
 public class LoggingConfiguration
 {

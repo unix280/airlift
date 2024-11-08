@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -36,7 +36,7 @@ public @interface MaxDataSize
 {
     String value();
 
-    String message() default "{io.airlift.units.MaxDataSize.message}";
+    String message() default "{com.facebook.airlift.units.MaxDataSize.message}";
 
     Class<?>[] groups() default {};
 

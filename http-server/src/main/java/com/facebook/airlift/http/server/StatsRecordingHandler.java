@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.http.server;
 
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;

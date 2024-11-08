@@ -16,8 +16,8 @@
 package com.facebook.airlift.sample;
 
 import com.facebook.airlift.event.client.InMemoryEventClient;
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
-import io.airlift.units.Duration;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeUnit;

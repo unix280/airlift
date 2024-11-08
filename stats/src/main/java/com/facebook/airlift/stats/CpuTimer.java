@@ -13,8 +13,8 @@
  */
 package com.facebook.airlift.stats;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.annotations.Beta;
-import io.airlift.units.Duration;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;

@@ -16,7 +16,7 @@
 package com.facebook.airlift.dbpool;
 
 import com.facebook.airlift.stats.TimeStat;
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 

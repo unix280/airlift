@@ -21,8 +21,8 @@ import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.util.FileSize;
 import com.facebook.airlift.log.Logger;
-import io.airlift.units.DataSize;
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.Duration;
 
 import java.io.File;
 import java.io.IOException;

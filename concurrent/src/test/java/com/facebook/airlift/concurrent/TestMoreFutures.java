@@ -1,9 +1,9 @@
 package com.facebook.airlift.concurrent;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import io.airlift.units.Duration;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 

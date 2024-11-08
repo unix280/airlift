@@ -30,13 +30,13 @@ import com.facebook.airlift.http.server.TheServlet;
 import com.facebook.airlift.log.Logging;
 import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.node.testing.TestingNodeModule;
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import io.airlift.units.Duration;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 

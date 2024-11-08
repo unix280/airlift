@@ -1,4 +1,6 @@
 /*
+ * Copyright 2010 Proofpoint, Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.airlift.units;
+package com.facebook.airlift.units;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class MaxDataSizeValidator
-        implements ConstraintValidator<MaxDataSize, DataSize>
+public class MaxDurationValidator
+        implements ConstraintValidator<MaxDuration, Duration>
 {
-    private DataSize max;
+    private Duration max;
 
     @Override
-    public void initialize(MaxDataSize dataSize)
+    public void initialize(MaxDuration duration)
     {
-        this.max = DataSize.valueOf(dataSize.value());
+        this.max = Duration.valueOf(duration.value());
     }
 
     @Override
-    public boolean isValid(DataSize dataSize, ConstraintValidatorContext context)
+    public boolean isValid(Duration duration, ConstraintValidatorContext context)
     {
-        return (dataSize == null) || (dataSize.compareTo(max) <= 0);
+        return duration == null || duration.compareTo(max) <= 0;
     }
 
     @Override

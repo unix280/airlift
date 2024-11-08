@@ -1,12 +1,12 @@
 package com.facebook.airlift.concurrent;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import io.airlift.units.Duration;
 
 import javax.annotation.Nullable;
 

@@ -6,10 +6,10 @@ import com.facebook.airlift.http.client.Request;
 import com.facebook.airlift.http.client.RequestStats;
 import com.facebook.airlift.http.client.Response;
 import com.facebook.airlift.http.client.ResponseHandler;
+import com.facebook.airlift.units.Duration;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import io.airlift.units.Duration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
