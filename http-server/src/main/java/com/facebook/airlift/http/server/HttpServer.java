@@ -256,6 +256,7 @@ public class HttpServer
             sslContextFactory.setWantClientAuth(true);
             sslContextFactory.setSslSessionTimeout((int) config.getSslSessionTimeout().getValue(SECONDS));
             sslContextFactory.setSslSessionCacheSize(config.getSslSessionCacheSize());
+            sslContextFactory.setRenegotiationAllowed(false);
             SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
 
             Integer acceptors = config.getHttpsAcceptorThreads();
