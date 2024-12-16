@@ -16,6 +16,7 @@
 package com.facebook.airlift.http.server;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethod;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -54,13 +56,14 @@ public class ClassPathResourceHandler
     private final String baseUri; // "" or "/foo"
     private final String classPathResourceBase;
     private final List<String> welcomeFiles;
+    private final Map<String, String> extraHeaders;
 
     public ClassPathResourceHandler(String baseUri, String classPathResourceBase, String... welcomeFiles)
     {
-        this(baseUri, classPathResourceBase, ImmutableList.copyOf(welcomeFiles));
+        this(baseUri, classPathResourceBase, ImmutableList.copyOf(welcomeFiles), ImmutableMap.of());
     }
 
-    public ClassPathResourceHandler(String baseUri, String classPathResourceBase, List<String> welcomeFiles)
+    public ClassPathResourceHandler(String baseUri, String classPathResourceBase, List<String> welcomeFiles, Map<String, String> extraHeaders)
     {
         requireNonNull(baseUri, "baseUri is null");
         requireNonNull(classPathResourceBase, "classPathResourceBase is null");
@@ -81,6 +84,7 @@ public class ClassPathResourceHandler
             files.add(welcomeFile);
         }
         this.welcomeFiles = files.build();
+        this.extraHeaders = ImmutableMap.copyOf(extraHeaders);
     }
 
     @Override
@@ -129,6 +133,7 @@ public class ClassPathResourceHandler
 
             String contentType = MIME_TYPES.getMimeByExtension(resource.toString());
             response.setContentType(contentType);
+            extraHeaders.forEach((name, value) -> response.setHeader(name, value));
 
             if (skipContent) {
                 return;

@@ -366,7 +366,11 @@ public class HttpServer
 
         for (HttpResourceBinding resource : resources) {
             GzipHandler gzipHandler = new GzipHandler();
-            gzipHandler.setHandler(new ClassPathResourceHandler(resource.getBaseUri(), resource.getClassPathResourceBase(), resource.getWelcomeFiles()));
+            gzipHandler.setHandler(new ClassPathResourceHandler(
+                    resource.getBaseUri(),
+                    resource.getClassPathResourceBase(),
+                    resource.getWelcomeFiles(),
+                    resource.getExtraHeaders()));
             handlers.addHandler(gzipHandler);
         }
 

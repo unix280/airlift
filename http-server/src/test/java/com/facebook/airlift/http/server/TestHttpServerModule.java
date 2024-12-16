@@ -181,7 +181,8 @@ public class TestHttpServerModule
                     binder.bind(Servlet.class).annotatedWith(TheServlet.class).to(DummyServlet.class);
                     newSetBinder(binder, Filter.class, TheServlet.class).addBinding().to(DummyFilter.class).in(Scopes.SINGLETON);
                     httpServerBinder(binder).bindResource("/", "webapp/user").withWelcomeFile("user-welcome.txt");
-                    httpServerBinder(binder).bindResource("/", "webapp/user2");
+                    httpServerBinder(binder).bindResource("/", "webapp/user2")
+                            .withExtraHeader("Content-Security-Policy", "frame-ancestors 'self'");
                     httpServerBinder(binder).bindResource("path", "webapp/user").withWelcomeFile("user-welcome.txt");
                     httpServerBinder(binder).bindResource("path", "webapp/user2");
                 });
@@ -202,12 +203,14 @@ public class TestHttpServerModule
             response = client.execute(prepareGet().setUri(httpUri.resolve("/filter")).build(), createStatusResponseHandler());
 
             assertEquals(response.getStatusCode(), HttpServletResponse.SC_PAYMENT_REQUIRED);
-
+            Map<String, String> extraHeaders = new ImmutableMap.Builder<String, String>()
+                    .put("Content-Security-Policy", "frame-ancestors 'self'")
+                    .build();
             // test http resources
             assertResource(httpUri, client, "", "welcome user!");
             assertResource(httpUri, client, "user-welcome.txt", "welcome user!");
             assertResource(httpUri, client, "user.txt", "user");
-            assertResource(httpUri, client, "user2.txt", "user2");
+            assertResource(httpUri, client, "user2.txt", "user2", extraHeaders);
             assertRedirect(httpUri, client, "path", "/path/");
             assertResource(httpUri, client, "path/", "welcome user!");
             assertResource(httpUri, client, "path/user-welcome.txt", "welcome user!");
@@ -221,6 +224,11 @@ public class TestHttpServerModule
 
     private void assertResource(URI baseUri, HttpClient client, String path, String contents)
     {
+        assertResource(baseUri, client, path, contents, ImmutableMap.of());
+    }
+
+    private void assertResource(URI baseUri, HttpClient client, String path, String contents, Map<String, String> hasHeaders)
+    {
         HttpUriBuilder uriBuilder = uriBuilderFrom(baseUri);
         StringResponse response = client.execute(prepareGet().setUri(uriBuilder.appendPath(path).build()).build(), createStringResponseHandler());
         assertEquals(response.getStatusCode(), HttpStatus.OK.code());
@@ -229,6 +237,10 @@ public class TestHttpServerModule
         MediaType mediaType = MediaType.parse(contentType);
         assertTrue(PLAIN_TEXT_UTF_8.is(mediaType), "Expected text/plain but got " + mediaType);
         assertEquals(response.getBody().trim(), contents);
+        hasHeaders.forEach((name, value) -> {
+            assertNotNull(response.getHeader(name), name + " header is absent");
+            assertEquals(value, response.getHeader(name));
+        });
     }
 
     private void assertRedirect(URI baseUri, HttpClient client, String path, String redirect)

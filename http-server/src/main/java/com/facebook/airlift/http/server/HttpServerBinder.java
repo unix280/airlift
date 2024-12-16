@@ -1,11 +1,14 @@
 package com.facebook.airlift.http.server;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Binder;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 import static java.util.Objects.requireNonNull;
@@ -43,6 +46,7 @@ public class HttpServerBinder
         private final String baseUri;
         private final String classPathResourceBase;
         private final List<String> welcomeFiles = new ArrayList<>();
+        private final Map<String, String> extraHeaders = new HashMap<>();
 
         public HttpResourceBinding(String baseUri, String classPathResourceBase)
         {
@@ -68,6 +72,17 @@ public class HttpServerBinder
         public HttpResourceBinding withWelcomeFile(String welcomeFile)
         {
             welcomeFiles.add(welcomeFile);
+            return this;
+        }
+
+        public Map<String, String> getExtraHeaders()
+        {
+            return ImmutableMap.copyOf(extraHeaders);
+        }
+
+        public HttpResourceBinding withExtraHeader(String name, String value)
+        {
+            extraHeaders.put(name, value);
             return this;
         }
     }
