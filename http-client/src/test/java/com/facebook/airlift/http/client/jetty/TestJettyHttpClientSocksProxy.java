@@ -63,7 +63,7 @@ public class TestJettyHttpClientSocksProxy
     }
 
     @Override
-    @Test(expectedExceptions = IOException.class, expectedExceptionsMessageRegExp = ".*SOCKS4 .*")
+    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = ".*port out of range.*")
     public void testBadPort()
             throws Exception
     {

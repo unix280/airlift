@@ -15,26 +15,27 @@
  */
 package com.facebook.airlift.jmx.http.rpc;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 import javax.management.remote.JMXServerErrorException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import static com.facebook.airlift.jmx.http.rpc.HttpMBeanServerRpc.createExceptionResponse;
 import static com.facebook.airlift.jmx.http.rpc.HttpMBeanServerRpc.createSuccessResponse;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 public class MBeanServerServlet
         extends HttpServlet

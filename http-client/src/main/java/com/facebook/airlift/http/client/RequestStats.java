@@ -20,10 +20,9 @@ import com.facebook.airlift.stats.DistributionStat;
 import com.facebook.airlift.stats.TimeStat;
 import com.facebook.airlift.units.Duration;
 import com.google.common.annotations.Beta;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
-
-import javax.inject.Inject;
 
 import static com.facebook.airlift.http.client.HttpStatus.familyForStatusCode;
 

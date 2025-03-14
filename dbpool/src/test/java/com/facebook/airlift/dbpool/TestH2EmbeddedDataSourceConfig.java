@@ -3,9 +3,8 @@ package com.facebook.airlift.dbpool;
 import com.facebook.airlift.configuration.testing.ConfigAssertions;
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableMap;
+import jakarta.validation.constraints.NotNull;
 import org.testng.annotations.Test;
-
-import javax.validation.constraints.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +72,6 @@ public class TestH2EmbeddedDataSourceConfig
     @Test
     public void testValidations()
     {
-        assertFailsValidation(new H2EmbeddedDataSourceConfig(), "filename", "may not be null", NotNull.class);
+        assertFailsValidation(new H2EmbeddedDataSourceConfig(), "filename", "must not be null", NotNull.class);
     }
 }

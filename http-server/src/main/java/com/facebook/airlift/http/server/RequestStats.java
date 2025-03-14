@@ -19,11 +19,10 @@ import com.facebook.airlift.stats.CounterStat;
 import com.facebook.airlift.stats.DistributionStat;
 import com.facebook.airlift.stats.TimeStat;
 import com.facebook.airlift.units.Duration;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
-
-import javax.inject.Inject;
 
 public class RequestStats
 {

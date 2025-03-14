@@ -27,8 +27,8 @@
 
         <dep.airlift.version>0.217-SNAPSHOT</dep.airlift.version>
         <dep.packaging.version>${dep.airlift.version}</dep.packaging.version>
-        <dep.jetty.version>9.4.55.v20240627</dep.jetty.version>
-        <dep.jersey.version>2.26</dep.jersey.version>
+        <dep.jetty.version>12.0.18</dep.jetty.version>
+        <dep.jersey.version>4.0.0-M2</dep.jersey.version>
         <dep.drift.version>0.217-SNAPSHOT</dep.drift.version>
     </properties>
 
@@ -92,6 +92,37 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.0.1-jre</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>2.37.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.16</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>7.0.5.Final</version>
+            </dependency>
+            <!-- required for hibernate validator -->
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.facebook.airlift</groupId>
                 <artifactId>bootstrap</artifactId>
@@ -195,10 +226,6 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
                     </exclusion>
                 </exclusions>
@@ -209,10 +236,6 @@
                 <artifactId>drift-codec</artifactId>
                 <version>${dep.drift.version}</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
@@ -227,10 +250,6 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
                     </exclusion>
                 </exclusions>
@@ -241,10 +260,6 @@
                 <artifactId>drift-transport-netty</artifactId>
                 <version>${dep.drift.version}</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
@@ -344,14 +359,14 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.eclipse.jetty.orbit</groupId>
-                        <artifactId>javax.servlet</artifactId>
+                        <artifactId>jakarta.servlet</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
 
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-servlet</artifactId>
                 <version>${dep.jetty.version}</version>
             </dependency>
 
@@ -362,8 +377,8 @@
             </dependency>
 
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlets</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-servlets</artifactId>
                 <version>${dep.jetty.version}</version>
             </dependency>
 
@@ -399,20 +414,26 @@
 
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-client</artifactId>
+                <artifactId>jetty-http2-client</artifactId>
                 <version>${dep.jetty.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-http-client-transport</artifactId>
+                <artifactId>jetty-http2-client-transport</artifactId>
                 <version>${dep.jetty.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-server</artifactId>
+                <artifactId>jetty-http2-server</artifactId>
                 <version>${dep.jetty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>4.0.0</version>
             </dependency>
 
             <!-- jersey -->
@@ -429,10 +450,6 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
                     </exclusion>
                 </exclusions>
@@ -442,24 +459,12 @@
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-server</artifactId>
                 <version>${dep.jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet-core</artifactId>
                 <version>${dep.jersey.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -475,10 +480,6 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
                     </exclusion>
                 </exclusions>
@@ -491,13 +492,15 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.hk2.external</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.glassfish.hk2.external</groupId>
                         <artifactId>aopalliance-repackaged</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.17.1</version>
             </dependency>
 
             <dependency>

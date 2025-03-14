@@ -27,8 +27,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

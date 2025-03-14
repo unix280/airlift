@@ -44,7 +44,6 @@ public class JsonCodecBinder
     public void bindJsonCodec(Class<?> type)
     {
         requireNonNull(type, "type is null");
-
         binder.bind(getJsonCodecKey(type)).toProvider(new JsonCodecProvider(type)).in(Scopes.SINGLETON);
     }
 

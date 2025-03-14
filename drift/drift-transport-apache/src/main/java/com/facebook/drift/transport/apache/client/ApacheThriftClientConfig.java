@@ -22,8 +22,7 @@ import com.facebook.airlift.units.Duration;
 import com.facebook.airlift.units.MaxDataSize;
 import com.facebook.airlift.units.MinDuration;
 import com.google.common.net.HostAndPort;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.File;
 

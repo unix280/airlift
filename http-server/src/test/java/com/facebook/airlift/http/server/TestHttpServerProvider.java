@@ -29,20 +29,19 @@ import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.tracetoken.TraceTokenManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +59,7 @@ import static com.google.common.io.MoreFiles.deleteRecursively;
 import static com.google.common.io.RecursiveDeleteOption.ALLOW_INSECURE;
 import static com.google.common.io.Resources.getResource;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.createTempDirectory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -86,11 +86,11 @@ public class TestHttpServerProvider
     public void setup()
             throws IOException
     {
-        tempDir = Files.createTempDir().getCanonicalFile(); // getCanonicalFile needed to get around Issue 365 (http://code.google.com/p/guava-libraries/issues/detail?id=365)
+        tempDir = createTempDirectory("test-http-server-provider").toFile().getCanonicalFile(); // getCanonicalFile needed to get around Issue 365 (http://code.google.com/p/guava-libraries/issues/detail?id=365)
         config = new HttpServerConfig()
                 .setHttpPort(0)
                 .setHttpsPort(0)
-                .setLogPath(new File(tempDir, "http-request.log").getAbsolutePath());
+                .setLogPath(tempDir.toPath().resolve("http-request.log").toAbsolutePath().toString());
         nodeInfo = new NodeInfo(new NodeConfig()
                 .setEnvironment("test")
                 .setNodeInternalAddress("localhost"));
@@ -381,7 +381,7 @@ public class TestHttpServerProvider
             protected void doGet(HttpServletRequest request, HttpServletResponse response)
                     throws IOException
             {
-                X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+                X509Certificate[] certs = (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
                 if ((certs == null) || (certs.length == 0)) {
                     throw new RuntimeException("No client certificate");
                 }
@@ -477,7 +477,7 @@ public class TestHttpServerProvider
         createAndStartServer();
     }
 
-    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".+Cannot recover key.+")
+    @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".+Cannot recover key.*")
     public void testInsufficientPasswordToAccessKeystore()
             throws Exception
     {
@@ -496,7 +496,7 @@ public class TestHttpServerProvider
         config.setHttpEnabled(false)
                 .setHttpsEnabled(true)
                 .setHttpsPort(0)
-                .setKeystorePath(new File(getResource("test.keystore").toURI()).getAbsolutePath())
+                .setKeystorePath(Path.of(getResource("test.keystore").toURI()).toAbsolutePath().toString())
                 .setKeystorePassword("airlift");
         createAndStartServer();
         Long daysUntilCertificateExpiration = server.getDaysUntilCertificateExpiration();

@@ -2,8 +2,7 @@ package com.facebook.airlift.concurrent;
 
 import com.facebook.airlift.log.Logger;
 import com.google.common.base.Preconditions;
-
-import javax.annotation.concurrent.ThreadSafe;
+import com.google.errorprone.annotations.ThreadSafe;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -1,6 +1,6 @@
 package com.facebook.airlift.http.client.jetty;
 
-import org.eclipse.jetty.client.util.AbstractTypedContentProvider;
+import org.eclipse.jetty.io.Content;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -11,13 +11,15 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
 public class ChunkedBytesContentProvider
-        extends AbstractTypedContentProvider
+        extends AbstractContentProvider
 {
     private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
     private static final int DEFAULT_BUFFER_SIZE = 4096;
 
     private final byte[] bytes;
-    private final int bufferSizeInBytes;
+    private final int bufferSize;
+    private ChunkedIterator iterator;
+    String contentType;
 
     public ChunkedBytesContentProvider(byte[] bytes)
     {
@@ -36,10 +38,17 @@ public class ChunkedBytesContentProvider
 
     public ChunkedBytesContentProvider(String contentType, byte[] bytes, int bufferSizeInBytes)
     {
-        super(contentType);
         this.bytes = requireNonNull(bytes, "bytes is null");
         checkArgument(bufferSizeInBytes > 0, "bufferSizeInBytes must be greater than zero: %s", bufferSizeInBytes);
-        this.bufferSizeInBytes = bufferSizeInBytes;
+        this.bufferSize = bufferSizeInBytes;
+        this.iterator = new ChunkedIterator(bytes, this.bufferSize);
+        this.contentType = requireNonNull(contentType, "contentType is null");
+    }
+
+    @Override
+    public String getContentType()
+    {
+        return contentType;
     }
 
     @Override
@@ -49,15 +58,30 @@ public class ChunkedBytesContentProvider
     }
 
     @Override
-    public boolean isReproducible()
+    public Content.Chunk read()
     {
-        return true;
+        if (iterator.hasNext()) {
+            // ordering matters
+            ByteBuffer buf = iterator.next();
+            boolean hasNext = iterator.hasNext();
+            return Content.Chunk.from(buf, !hasNext);
+        }
+
+        return null;
     }
 
     @Override
-    public Iterator<ByteBuffer> iterator()
+    public void fail(Throwable throwable)
     {
-        return new ChunkedIterator(bytes, bufferSizeInBytes);
+        super.fail(throwable);
+        iterator.forEachRemaining(chunk -> {});
+    }
+
+    @Override
+    public boolean rewind()
+    {
+        iterator = new ChunkedIterator(bytes, bufferSize);
+        return true;
     }
 
     private static class ChunkedIterator

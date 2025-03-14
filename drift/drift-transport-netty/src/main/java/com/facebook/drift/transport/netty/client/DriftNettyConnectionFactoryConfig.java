@@ -20,8 +20,7 @@ import com.facebook.airlift.configuration.ConfigDescription;
 import com.facebook.airlift.units.Duration;
 import com.facebook.airlift.units.MinDuration;
 import com.google.common.net.HostAndPort;
-
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 

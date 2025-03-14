@@ -17,7 +17,7 @@ import com.facebook.airlift.configuration.testing.ConfigAssertions;
 import com.google.common.collect.ImmutableMap;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class TestKerberosConfig
@@ -43,9 +43,9 @@ public class TestKerberosConfig
                 .build();
 
         KerberosConfig expected = new KerberosConfig()
-                .setKerberosConfig(new File("/etc/krb5.conf"))
+                .setKerberosConfig(Path.of("/etc/krb5.conf").toFile())
                 .setServiceName("airlift")
-                .setKeytab(new File("/tmp/presto.keytab"))
+                .setKeytab(Path.of("/tmp/presto.keytab").toFile())
                 .setPrincipalHostname("presto.example.com");
 
         ConfigAssertions.assertFullMapping(properties, expected);

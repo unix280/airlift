@@ -20,16 +20,16 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MockUriInfo
         implements UriInfo
@@ -184,12 +184,7 @@ public class MockUriInfo
 
     private static String urlDecode(String value)
     {
-        try {
-            return URLDecoder.decode(value, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return URLDecoder.decode(value, UTF_8);
     }
 
     @Override
@@ -209,6 +204,12 @@ public class MockUriInfo
     public List<String> getMatchedURIs()
     {
         return getMatchedURIs(true);
+    }
+
+    @Override
+    public String getMatchedResourceTemplate()
+    {
+        return "";
     }
 
     @Override

@@ -27,10 +27,9 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.Servlet;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.servlet.Servlet;
 
 import java.lang.annotation.Annotation;
 import java.net.URI;

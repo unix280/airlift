@@ -20,8 +20,7 @@ import com.facebook.drift.codec.metadata.ThriftType;
 import com.facebook.drift.codec.metadata.TypeCoercion;
 import com.facebook.drift.protocol.TProtocolReader;
 import com.facebook.drift.protocol.TProtocolWriter;
-
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 /**
  * CoercionThriftCodec encapsulates a ThriftCodec and coerces the values to another type using

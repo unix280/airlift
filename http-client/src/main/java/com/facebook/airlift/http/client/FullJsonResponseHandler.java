@@ -19,10 +19,8 @@ import com.facebook.airlift.http.client.FullJsonResponseHandler.JsonResponse;
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
-
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -72,7 +70,7 @@ public class FullJsonResponseHandler<T>
     private static byte[] readResponseBytes(Response response)
     {
         try {
-            return ByteStreams.toByteArray(response.getInputStream());
+            return response.getInputStream().readAllBytes();
         }
         catch (IOException e) {
             throw new RuntimeException("Error reading response from server", e);

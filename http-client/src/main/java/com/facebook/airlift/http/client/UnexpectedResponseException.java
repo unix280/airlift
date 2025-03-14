@@ -18,8 +18,7 @@ package com.facebook.airlift.http.client;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 

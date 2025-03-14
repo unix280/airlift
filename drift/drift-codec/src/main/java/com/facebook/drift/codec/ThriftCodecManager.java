@@ -53,9 +53,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.errorprone.annotations.ThreadSafe;
 import com.google.inject.Inject;
-
-import javax.annotation.concurrent.ThreadSafe;
 
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;

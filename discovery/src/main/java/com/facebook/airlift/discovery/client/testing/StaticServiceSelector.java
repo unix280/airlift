@@ -19,13 +19,13 @@ import com.facebook.airlift.discovery.client.ServiceDescriptor;
 import com.facebook.airlift.discovery.client.ServiceSelector;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
 
 import static com.facebook.airlift.discovery.client.ServiceSelectorConfig.DEFAULT_POOL;
+import static com.google.common.collect.Streams.stream;
 import static java.util.Objects.requireNonNull;
 
 public class StaticServiceSelector
@@ -44,7 +44,7 @@ public class StaticServiceSelector
     {
         requireNonNull(serviceDescriptors, "serviceDescriptors is null");
 
-        ServiceDescriptor serviceDescriptor = Iterables.getFirst(serviceDescriptors, null);
+        ServiceDescriptor serviceDescriptor = stream(serviceDescriptors).findFirst().orElse(null);
         if (serviceDescriptor != null) {
             this.type = serviceDescriptor.getType();
             this.pool = serviceDescriptor.getPool();

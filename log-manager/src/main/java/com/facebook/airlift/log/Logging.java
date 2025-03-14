@@ -16,16 +16,15 @@
 package com.facebook.airlift.log;
 
 import com.google.common.collect.ImmutableSortedMap;
-
-import javax.annotation.concurrent.GuardedBy;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +34,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
 import static com.google.common.collect.Maps.fromProperties;
+import static java.nio.file.Files.newInputStream;
 
 /**
  * Initializes the logging subsystem.
@@ -132,7 +132,7 @@ public class Logging
             throws IOException
     {
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream(file)) {
+        try (InputStream inputStream = newInputStream(file.toPath())) {
             properties.load(inputStream);
         }
 
@@ -190,7 +190,7 @@ public class Logging
 
         if (config.getLevelsFile() != null) {
             try {
-                setLevels(new File(config.getLevelsFile()));
+                setLevels(Paths.get(config.getLevelsFile()).toFile());
             }
             catch (IOException e) {
                 throw new UncheckedIOException(e);

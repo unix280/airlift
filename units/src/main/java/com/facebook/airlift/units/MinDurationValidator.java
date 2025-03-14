@@ -15,8 +15,9 @@
  */
 package com.facebook.airlift.units;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class MinDurationValidator
         implements ConstraintValidator<MinDuration, Duration>
@@ -26,7 +27,12 @@ public class MinDurationValidator
     @Override
     public void initialize(MinDuration duration)
     {
-        this.min = Duration.valueOf(duration.value());
+        try {
+            this.min = Duration.valueOf(duration.value());
+        }
+        catch (IllegalArgumentException e) {
+            throw new ConstraintDeclarationException(e);
+        }
     }
 
     @Override

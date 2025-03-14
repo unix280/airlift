@@ -16,10 +16,9 @@
 package com.facebook.airlift.sample;
 
 import com.facebook.airlift.event.client.NullEventClient;
+import jakarta.ws.rs.core.Response;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.Collection;

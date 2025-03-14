@@ -15,6 +15,9 @@ package com.facebook.airlift.http.server;
 
 import com.facebook.airlift.log.Logger;
 import com.sun.security.auth.module.Krb5LoginModule;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
@@ -22,15 +25,12 @@ import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.auth.kerberos.KerberosPrincipal;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -132,7 +132,7 @@ public class KerberosAuthenticator
                     requestSpnegoToken = parts[1];
                     Optional<Principal> principal = authenticate(parts[1]);
                     if (principal.isPresent()) {
-                        return principal.get();
+                        return principal.orElseThrow();
                     }
                 }
                 catch (RuntimeException e) {

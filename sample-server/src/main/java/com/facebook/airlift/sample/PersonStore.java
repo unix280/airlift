@@ -19,10 +19,9 @@ import com.facebook.airlift.event.client.EventClient;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
-
-import javax.inject.Inject;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;

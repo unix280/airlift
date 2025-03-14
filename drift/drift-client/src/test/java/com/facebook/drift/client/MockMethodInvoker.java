@@ -22,8 +22,7 @@ import com.facebook.drift.transport.client.MethodInvoker;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import javax.annotation.concurrent.GuardedBy;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 
 import java.util.ArrayList;
 import java.util.List;

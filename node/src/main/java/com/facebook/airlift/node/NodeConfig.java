@@ -19,9 +19,8 @@ import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.DefunctConfig;
 import com.facebook.airlift.configuration.LegacyConfig;
 import com.google.common.net.InetAddresses;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.net.InetAddress;
 

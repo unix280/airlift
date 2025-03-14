@@ -31,7 +31,7 @@ import java.util.Map;
 
 import static com.facebook.airlift.discovery.client.DiscoveryBinder.discoveryBinder;
 import static com.facebook.airlift.discovery.client.ServiceTypes.serviceType;
-import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.MoreCollectors.onlyElement;
 import static java.util.Objects.requireNonNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -97,10 +97,10 @@ public abstract class AbstractTestDiscoveryModule
                 });
 
         HttpServiceSelector selector = injector.getInstance(Key.get(HttpServiceSelector.class, serviceType("apple")));
-        assertEquals(getOnlyElement(selector.selectHttpService()), URI.create("http://127.0.0.1:4444"));
+        assertEquals(selector.selectHttpService().stream().collect(onlyElement()), URI.create("http://127.0.0.1:4444"));
 
         selector = injector.getInstance(Key.get(HttpServiceSelector.class, serviceType("banana")));
-        assertEquals(getOnlyElement(selector.selectHttpService()), URI.create("http://127.0.0.1:4444"));
+        assertEquals(selector.selectHttpService().stream().collect(onlyElement()), URI.create("http://127.0.0.1:4444"));
 
         selector = injector.getInstance(Key.get(HttpServiceSelector.class, serviceType("carrot")));
         assertTrue(selector.selectHttpService().isEmpty());

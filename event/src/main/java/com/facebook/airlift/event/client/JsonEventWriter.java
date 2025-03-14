@@ -20,8 +20,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.google.common.collect.ImmutableMap;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -56,21 +55,19 @@ public class JsonEventWriter
         requireNonNull(events, "events is null");
         requireNonNull(out, "out is null");
 
-        final JsonGenerator jsonGenerator = jsonFactory.createGenerator(out, JsonEncoding.UTF8);
+        try (final JsonGenerator jsonGenerator = jsonFactory.createGenerator(out, JsonEncoding.UTF8)) {
+            jsonGenerator.writeStartArray();
 
-        jsonGenerator.writeStartArray();
+            events.generate(event -> {
+                JsonSerializer<T> serializer = getSerializer(event);
+                if (serializer == null) {
+                    throw new InvalidEventException("Event class [%s] has not been registered as an event", event.getClass().getName());
+                }
+                serializer.serialize(event, jsonGenerator, null);
+            });
 
-        events.generate(event -> {
-            JsonSerializer<T> serializer = getSerializer(event);
-            if (serializer == null) {
-                throw new InvalidEventException("Event class [%s] has not been registered as an event", event.getClass().getName());
-            }
-
-            serializer.serialize(event, jsonGenerator, null);
-        });
-
-        jsonGenerator.writeEndArray();
-        jsonGenerator.flush();
+            jsonGenerator.writeEndArray();
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -18,9 +18,12 @@ package com.facebook.airlift.http.server;
 import com.facebook.airlift.event.client.InMemoryEventClient;
 import com.facebook.airlift.tracetoken.TraceTokenManager;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.server.ConnectionMetaData;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
+import org.mockito.MockedStatic;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,7 +34,6 @@ import java.security.Principal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
@@ -42,6 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.eclipse.jetty.http.HttpVersion.HTTP_2;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -73,8 +76,8 @@ public class TestDelimitedRequestLog
     public void testTraceTokenHeader()
             throws Exception
     {
-        Request request = mock(Request.class);
-        Response response = mock(Response.class);
+        Request request = setupMockRequest();
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
         TraceTokenManager tokenManager = new TraceTokenManager();
         InMemoryEventClient eventClient = new InMemoryEventClient();
         DelimitedRequestLog logger = new DelimitedRequestLog(
@@ -87,16 +90,19 @@ public class TestDelimitedRequestLog
                 new SystemCurrentTimeMillisProvider(),
                 false);
         String token = "test-trace-token";
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
-        when(request.getHeader(TRACETOKEN_HEADER)).thenReturn(token);
+        HttpFields.Mutable headers = HttpFields.build()
+                .add(TRACETOKEN_HEADER, token);
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(request.getHeaders()).thenReturn(headers);
         // log a request without a token set by tokenManager
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+        logger.log(request, 0, 200, headers, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
         // create and set a new token with tokenManager
         tokenManager.createAndRegisterNewRequestToken();
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+        logger.log(request, 0, 200, headers, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
         // clear the token HTTP header
-        when(request.getHeader(TRACETOKEN_HEADER)).thenReturn(null);
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+        when(request.getHeaders()).thenReturn(HttpFields.EMPTY);
+        logger.log(request, 0, 200, HttpFields.EMPTY, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
         logger.stop();
 
         List<Object> events = eventClient.getEvents();
@@ -113,8 +119,10 @@ public class TestDelimitedRequestLog
     public void testWriteLog()
             throws Exception
     {
-        Request request = mock(Request.class);
+        Request request = setupMockRequest();
         Response response = mock(Response.class);
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+        Request.AuthenticationState authenticationState = mock(Request.AuthenticationState.class);
         Principal principal = mock(Principal.class);
 
         long timeToFirstByte = 456;
@@ -132,10 +140,10 @@ public class TestDelimitedRequestLog
         long responseSize = 32311;
         int responseCode = 200;
         String responseContentType = "response/type";
-        HttpURI uri = new HttpURI("http://www.example.com/aaa+bbb/ccc?param=hello%20there&other=true");
+        HttpURI uri = HttpURI.build("http://www.example.com/aaa+bbb/ccc?param=hello%20there&other=true");
         long beginToDispatchMillis = 333;
         long firstToLastContentTimeInMillis = 444;
-        long beginToEndMillis = 555;
+        long afterHandleMillis = 555;
         DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
         stats.accept(1);
         stats.accept(3);
@@ -145,29 +153,34 @@ public class TestDelimitedRequestLog
         InMemoryEventClient eventClient = new InMemoryEventClient();
         MockCurrentTimeMillisProvider currentTimeMillisProvider = new MockCurrentTimeMillisProvider(timestamp + timeToLastByte);
         DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, tokenManager, eventClient, currentTimeMillisProvider, false);
-
+        HttpFields.Mutable headers = HttpFields.build()
+                .add("User-Agent", agent)
+                .add("Referer", referrer)
+                .add("X-FORWARDED-FOR", ImmutableList.of("1.1.1.1, 2.2.2.2", "3.3.3.3, " + ip))
+                .add("X-FORWARDED-PROTO", protocol)
+                .add("Content-Type", requestContentType);
         when(principal.getName()).thenReturn(user);
-        when(request.getTimeStamp()).thenReturn(timestamp);
-        when(request.getHeader("User-Agent")).thenReturn(agent);
-        when(request.getHeader("Referer")).thenReturn(referrer);
-        when(request.getRemoteAddr()).thenReturn("9.9.9.9");
-        when(request.getHeaders("X-FORWARDED-FOR")).thenReturn(Collections.enumeration(ImmutableList.of("1.1.1.1, 2.2.2.2", "3.3.3.3, " + ip)));
-        when(request.getProtocol()).thenReturn("unknown");
-        when(request.getHeader("X-FORWARDED-PROTO")).thenReturn(protocol);
+        when(authenticationState.getUserPrincipal()).thenReturn(principal);
+        when(connectionMetaData.getProtocol()).thenReturn("unknown");
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getHeaders()).thenReturn(headers);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(request.getHttpURI()).thenReturn(uri);
         when(request.getAttribute(TimingFilter.FIRST_BYTE_TIME)).thenReturn(timestamp + timeToFirstByte);
-        when(request.getRequestURI()).thenReturn(uri.toString());
-        when(request.getUserPrincipal()).thenReturn(principal);
         when(request.getMethod()).thenReturn(method);
-        when(request.getContentRead()).thenReturn(requestSize);
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
-        when(request.getHeader("Content-Type")).thenReturn(requestContentType);
         when(response.getStatus()).thenReturn(responseCode);
-        when(response.getContentCount()).thenReturn(responseSize);
-        when(response.getHeader("Content-Type")).thenReturn(responseContentType);
+        try (MockedStatic<Request> requestMock = mockStatic(Request.class)) {
+            requestMock.when(() -> Request.getTimeStamp(request)).thenReturn(timestamp);
+            requestMock.when(() -> Request.getRemoteAddr(request)).thenReturn("9.9.9.9");
+            requestMock.when(() -> Request.getAuthenticationState(request)).thenReturn(authenticationState);
+            requestMock.when(() -> Request.getContentBytesRead(request)).thenReturn(requestSize);
+            HttpFields.Mutable responseHeaders = HttpFields.build()
+                    .put("Content-Type", responseContentType);
 
-        tokenManager.createAndRegisterNewRequestToken();
-        logger.log(request, response, beginToDispatchMillis, beginToEndMillis, firstToLastContentTimeInMillis, responseContentInterarrivalStats);
-        logger.stop();
+            tokenManager.createAndRegisterNewRequestToken();
+            logger.log(request, responseSize, responseCode, responseHeaders, beginToDispatchMillis, afterHandleMillis, firstToLastContentTimeInMillis, responseContentInterarrivalStats);
+            logger.stop();
+        }
 
         List<Object> events = eventClient.getEvents();
         assertEquals(events.size(), 1);
@@ -201,14 +214,14 @@ public class TestDelimitedRequestLog
                 uri,
                 user,
                 agent,
+                responseSize,
                 responseCode,
                 requestSize,
-                responseSize,
                 event.getTimeToLastByte(),
                 tokenManager.getCurrentRequestToken(),
-                HTTP_2.toString(),
+                HTTP_2,
                 beginToDispatchMillis,
-                beginToEndMillis,
+                afterHandleMillis,
                 firstToLastContentTimeInMillis,
                 format("%.2f, %.2f, %.2f, %d", stats.getMin(), stats.getAverage(), stats.getMax(), stats.getCount()));
         assertEquals(actual, expected);
@@ -218,16 +231,17 @@ public class TestDelimitedRequestLog
     public void testNoXForwardedProto()
             throws Exception
     {
-        Request request = mock(Request.class);
-        Response response = mock(Response.class);
+        Request request = setupMockRequest();
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
         String protocol = "protocol";
 
-        when(request.getScheme()).thenReturn("protocol");
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(request.getHttpURI()).thenReturn(HttpURI.build("protocol://localhost:8080"));
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
 
         InMemoryEventClient eventClient = new InMemoryEventClient();
         DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+        logger.log(request, 200, 0, HttpFields.EMPTY, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
         logger.stop();
 
         List<Object> events = eventClient.getEvents();
@@ -241,14 +255,11 @@ public class TestDelimitedRequestLog
     public void testNoTimeToFirstByte()
             throws Exception
     {
-        Request request = mock(Request.class);
-        Response response = mock(Response.class);
-
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
+        Request request = setupMockRequest();
 
         InMemoryEventClient eventClient = new InMemoryEventClient();
         DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+        logger.log(request, 200, 0, HttpFields.EMPTY, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
         logger.stop();
 
         List<Object> events = eventClient.getEvents();
@@ -258,27 +269,40 @@ public class TestDelimitedRequestLog
         assertNull(event.getTimeToFirstByte());
     }
 
+    private Request setupMockRequest()
+    {
+        Request request = mock(Request.class);
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getHeaders()).thenReturn(HttpFields.EMPTY);
+        when(request.getHttpURI()).thenReturn(HttpURI.build("http://localhost"));
+        return request;
+    }
+
     @Test
     public void testNoXForwardedFor()
             throws Exception
     {
-        Request request = mock(Request.class);
-        Response response = mock(Response.class);
+        Request request = setupMockRequest();
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
         String clientIp = "1.1.1.1";
 
-        when(request.getRemoteAddr()).thenReturn(clientIp);
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        try (MockedStatic<Request> mockedRequest = mockStatic(Request.class)) {
+            mockedRequest.when(() -> Request.getRemoteAddr(request)).thenReturn(clientIp);
+            InMemoryEventClient eventClient = new InMemoryEventClient();
+            DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
+            logger.log(request, 200, 0, HttpFields.EMPTY, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+            logger.stop();
 
-        InMemoryEventClient eventClient = new InMemoryEventClient();
-        DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
-        logger.stop();
+            List<Object> events = eventClient.getEvents();
+            assertEquals(events.size(), 1);
+            HttpRequestEvent event = (HttpRequestEvent) events.get(0);
 
-        List<Object> events = eventClient.getEvents();
-        assertEquals(events.size(), 1);
-        HttpRequestEvent event = (HttpRequestEvent) events.get(0);
-
-        assertEquals(event.getClientAddress(), clientIp);
+            assertEquals(event.getClientAddress(), clientIp);
+        }
     }
 
     @Test
@@ -286,22 +310,29 @@ public class TestDelimitedRequestLog
             throws Exception
     {
         Request request = mock(Request.class);
-        Response response = mock(Response.class);
+
+        ConnectionMetaData connectionMetaData = mock(ConnectionMetaData.class);
+        when(request.getConnectionMetaData()).thenReturn(connectionMetaData);
+        when(connectionMetaData.getHttpVersion()).thenReturn(HTTP_2);
+        when(request.getHttpURI()).thenReturn(HttpURI.build("http://localhost:8080/test"));
         String clientIp = "1.1.1.1";
+        HttpFields.Mutable fields = HttpFields.build();
+        ImmutableList.of(clientIp, "192.168.1.2, 172.16.0.1", "169.254.1.2, 127.1.2.3", "10.1.2.3")
+                .forEach(ip -> fields.add("X-FORWARDED-FOR", ip));
+        when(request.getHeaders()).thenReturn(fields);
+        try (MockedStatic<Request> requestMockedStatic = mockStatic(Request.class)) {
+            requestMockedStatic.when(() -> Request.getRemoteAddr(request)).thenReturn("9.9.9.9");
 
-        when(request.getRemoteAddr()).thenReturn("9.9.9.9");
-        when(request.getHeaders("X-FORWARDED-FOR")).thenReturn(Collections.enumeration(ImmutableList.of(clientIp, "192.168.1.2, 172.16.0.1", "169.254.1.2, 127.1.2.3", "10.1.2.3")));
-        when(request.getHttpVersion()).thenReturn(HTTP_2);
+            InMemoryEventClient eventClient = new InMemoryEventClient();
+            DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
+            logger.log(request, 200, 0, fields, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
+            logger.stop();
 
-        InMemoryEventClient eventClient = new InMemoryEventClient();
-        DelimitedRequestLog logger = new DelimitedRequestLog(file.getAbsolutePath(), 1, 256, Long.MAX_VALUE, null, eventClient, false);
-        logger.log(request, response, 0, 0, 0, new DoubleSummaryStats(new DoubleSummaryStatistics()));
-        logger.stop();
+            List<Object> events = eventClient.getEvents();
+            assertEquals(events.size(), 1);
+            HttpRequestEvent event = (HttpRequestEvent) events.get(0);
 
-        List<Object> events = eventClient.getEvents();
-        assertEquals(events.size(), 1);
-        HttpRequestEvent event = (HttpRequestEvent) events.get(0);
-
-        assertEquals(event.getClientAddress(), clientIp);
+            assertEquals(event.getClientAddress(), clientIp);
+        }
     }
 }

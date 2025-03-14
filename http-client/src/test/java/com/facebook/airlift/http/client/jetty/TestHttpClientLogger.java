@@ -18,12 +18,12 @@ import com.facebook.airlift.http.client.jetty.HttpClientLogger.ResponseInfo;
 import com.facebook.airlift.units.DataSize;
 import com.facebook.airlift.units.Duration;
 import com.google.common.io.Files;
-import org.eclipse.jetty.client.api.ContentProvider;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
+import jakarta.annotation.Nullable;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.util.Fields;
@@ -31,11 +31,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
-
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpCookie;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -44,8 +41,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.http.client.TraceTokenRequestFilter.TRACETOKEN_HEADER;
 import static com.facebook.airlift.http.client.jetty.HttpRequestEvent.NO_RESPONSE;
@@ -97,7 +98,7 @@ public class TestHttpClientLogger
         long responseSize = 345;
         long requestTimestamp = System.currentTimeMillis();
 
-        HttpFields headers = new HttpFields();
+        HttpFields.Mutable headers = HttpFields.build();
         headers.add(TRACETOKEN_HEADER, "test-token");
 
         Request request = new TestRequest(HTTP_2, method, uri, headers);
@@ -149,7 +150,7 @@ public class TestHttpClientLogger
         URI uri = new URI("http://www.google.com");
         long requestTimestamp = System.currentTimeMillis();
 
-        HttpFields headers = new HttpFields();
+        HttpFields.Mutable headers = HttpFields.build();
         headers.add(TRACETOKEN_HEADER, "test-token");
         Request request = new TestRequest(HTTP_1_1, method, uri, headers);
 
@@ -172,7 +173,7 @@ public class TestHttpClientLogger
         assertEquals(columns[1], HTTP_1_1.toString());
         assertEquals(columns[2], method);
         assertEquals(columns[3], uri.toString());
-        assertEquals(columns[4], getFailureReason(responseInfo).get());
+        assertEquals(columns[4], getFailureReason(responseInfo).orElseThrow());
         assertEquals(columns[5], Integer.toString(NO_RESPONSE));
         assertNotEquals(columns[6], Long.toString(0));
         assertEquals(columns[7], Long.toString(0));
@@ -189,7 +190,7 @@ public class TestHttpClientLogger
     {
         long now = System.currentTimeMillis();
 
-        Request request = new TestRequest(HTTP_1_1, "GET", new URI("http://www.google.com"), new HttpFields());
+        Request request = new TestRequest(HTTP_1_1, "GET", new URI("http://www.google.com"), HttpFields.build());
 
         DefaultHttpClientLogger logger = new DefaultHttpClientLogger(
                 file.getAbsolutePath(),
@@ -336,27 +337,33 @@ public class TestHttpClientLogger
         }
 
         @Override
-        public Request header(String name, String value)
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Request header(HttpHeader header, String value)
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<HttpCookie> getCookies()
+        public Request headers(Consumer<HttpFields.Mutable> consumer)
         {
             return null;
         }
 
         @Override
-        public Request cookie(HttpCookie cookie)
+        public Supplier<HttpFields> getTrailersSupplier()
         {
-            throw new UnsupportedOperationException();
+            return null;
+        }
+
+        @Override
+        public Request trailersSupplier(Supplier<HttpFields> supplier)
+        {
+            return null;
+        }
+
+        @Override
+        public List<org.eclipse.jetty.http.HttpCookie> getCookies()
+        {
+            return null;
+        }
+
+        @Override
+        public Request cookie(HttpCookie httpCookie)
+        {
+            return null;
         }
 
         @Override
@@ -384,21 +391,15 @@ public class TestHttpClientLogger
         }
 
         @Override
-        public ContentProvider getContent()
+        public Content getBody()
         {
             return null;
         }
 
         @Override
-        public Request content(ContentProvider content)
+        public Request body(Content content)
         {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Request content(ContentProvider content, String contentType)
-        {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override
@@ -465,12 +466,6 @@ public class TestHttpClientLogger
         public Request followRedirects(boolean follow)
         {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T extends RequestListener> List<T> getRequestListeners(Class<T> listenerClass)
-        {
-            return null;
         }
 
         @Override
@@ -552,7 +547,7 @@ public class TestHttpClientLogger
         }
 
         @Override
-        public Request onResponseContentDemanded(Response.DemandedContentListener demandedContentListener)
+        public Request onResponseContentSource(Response.ContentSourceListener contentSourceListener)
         {
             return null;
         }
@@ -567,6 +562,12 @@ public class TestHttpClientLogger
         public Request onResponseFailure(Response.FailureListener listener)
         {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Request onPush(BiFunction<Request, Request, Response.CompleteListener> biFunction)
+        {
+            return null;
         }
 
         @Override
@@ -588,7 +589,7 @@ public class TestHttpClientLogger
         }
 
         @Override
-        public boolean abort(Throwable cause)
+        public CompletableFuture<Boolean> abort(Throwable cause)
         {
             throw new UnsupportedOperationException();
         }
@@ -612,12 +613,6 @@ public class TestHttpClientLogger
 
         @Override
         public Request getRequest()
-        {
-            return null;
-        }
-
-        @Override
-        public <T extends ResponseListener> List<T> getListeners(Class<T> listenerClass)
         {
             return null;
         }
@@ -647,7 +642,13 @@ public class TestHttpClientLogger
         }
 
         @Override
-        public boolean abort(Throwable cause)
+        public HttpFields getTrailers()
+        {
+            return null;
+        }
+
+        @Override
+        public CompletableFuture<Boolean> abort(Throwable cause)
         {
             throw new UnsupportedOperationException();
         }

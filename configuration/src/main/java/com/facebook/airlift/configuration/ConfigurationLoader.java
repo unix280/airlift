@@ -17,14 +17,15 @@ package com.facebook.airlift.configuration;
 
 import com.google.common.collect.ImmutableSortedMap;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
 import static com.google.common.collect.Maps.fromProperties;
+import static java.nio.file.Files.newInputStream;
 
 public final class ConfigurationLoader
 {
@@ -55,7 +56,7 @@ public final class ConfigurationLoader
             throws IOException
     {
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream(path)) {
+        try (InputStream inputStream = newInputStream(Paths.get(path))) {
             properties.load(inputStream);
         }
 

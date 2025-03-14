@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static com.google.common.io.MoreFiles.deleteRecursively;
 import static com.google.common.io.RecursiveDeleteOption.ALLOW_INSECURE;
@@ -51,16 +52,17 @@ public class TestLogging
     public void testRecoverTempFiles()
             throws IOException
     {
+        Path tempDirPath = tempDir.toPath();
         LoggingConfiguration configuration = new LoggingConfiguration();
-        configuration.setLogPath(new File(tempDir, "launcher.log").getPath());
+        configuration.setLogPath(tempDirPath.resolve("launcher.log").toString());
 
-        File logFile1 = new File(tempDir, "test1.log");
+        File logFile1 = tempDirPath.resolve("test1.log").toFile();
         Files.touch(logFile1);
-        File logFile2 = new File(tempDir, "test2.log");
+        File logFile2 = tempDirPath.resolve("test2.log").toFile();
         Files.touch(logFile2);
-        File tempLogFile1 = new File(tempDir, "temp1.tmp");
+        File tempLogFile1 = tempDirPath.resolve("temp1.tmp").toFile();
         Files.touch(tempLogFile1);
-        File tempLogFile2 = new File(tempDir, "temp2.tmp");
+        File tempLogFile2 = tempDirPath.resolve("temp2.tmp").toFile();
         Files.touch(tempLogFile2);
 
         Logging logging = Logging.initialize();
@@ -71,8 +73,8 @@ public class TestLogging
         assertFalse(tempLogFile1.exists());
         assertFalse(tempLogFile2.exists());
 
-        assertTrue(new File(tempDir, "temp1.log").exists());
-        assertTrue(new File(tempDir, "temp2.log").exists());
+        assertTrue(tempDirPath.resolve("temp1.log").toFile().exists());
+        assertTrue(tempDirPath.resolve("temp2.log").toFile().exists());
     }
 
     @Test

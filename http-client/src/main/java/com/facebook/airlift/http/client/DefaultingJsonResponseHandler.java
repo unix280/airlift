@@ -17,7 +17,6 @@ package com.facebook.airlift.http.client;
 
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 import com.google.common.primitives.Ints;
 
@@ -73,7 +72,7 @@ public class DefaultingJsonResponseHandler<T>
             return defaultValue;
         }
         try {
-            return jsonCodec.fromJson(ByteStreams.toByteArray(response.getInputStream()));
+            return jsonCodec.fromJson(response.getInputStream().readAllBytes());
         }
         catch (Exception e) {
             return defaultValue;

@@ -18,8 +18,7 @@ package com.facebook.airlift.dbpool;
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.ConfigDescription;
 import com.facebook.airlift.configuration.ConfigSecuritySensitive;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Configuration for {@link H2EmbeddedDataSource}.

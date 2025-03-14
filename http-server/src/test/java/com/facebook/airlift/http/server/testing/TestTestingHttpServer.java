@@ -37,20 +37,19 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -328,7 +327,6 @@ public class TestTestingHttpServer
 
         @Override
         public void init(FilterConfig filterConfig)
-                throws ServletException
         {
         }
 

@@ -19,28 +19,29 @@ import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
 import com.google.common.primitives.Ints;
-import org.eclipse.jetty.client.DuplexConnectionPool;
+import jakarta.annotation.PreDestroy;
+import org.eclipse.jetty.client.AbstractConnectionPool;
+import org.eclipse.jetty.client.AuthenticationStore;
+import org.eclipse.jetty.client.ConnectionPoolAccessor;
+import org.eclipse.jetty.client.Destination;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.client.HttpRequest;
-import org.eclipse.jetty.client.PoolingHttpDestination;
+import org.eclipse.jetty.client.InputStreamResponseListener;
+import org.eclipse.jetty.client.PathRequestContent;
+import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.client.Socks4Proxy;
 import org.eclipse.jetty.client.WWWAuthenticationProtocolHandler;
-import org.eclipse.jetty.client.api.AuthenticationStore;
-import org.eclipse.jetty.client.api.ContentProvider;
-import org.eclipse.jetty.client.api.Destination;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
-import org.eclipse.jetty.client.http.HttpConnectionOverHTTP;
-import org.eclipse.jetty.client.util.InputStreamResponseListener;
-import org.eclipse.jetty.client.util.PathContentProvider;
+import org.eclipse.jetty.client.transport.HttpChannel;
+import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
+import org.eclipse.jetty.client.transport.HttpConnection;
+import org.eclipse.jetty.client.transport.HttpDestination;
+import org.eclipse.jetty.client.transport.HttpExchange;
+import org.eclipse.jetty.client.transport.HttpRequest;
+import org.eclipse.jetty.http.HttpCookieStore;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
-import org.eclipse.jetty.io.ByteBufferPool;
+import org.eclipse.jetty.http2.client.transport.HttpClientTransportOverHTTP2;
+import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ConnectionStatistics;
-import org.eclipse.jetty.io.MappedByteBufferPool;
-import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -51,15 +52,10 @@ import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 
-import javax.annotation.PreDestroy;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
@@ -78,19 +74,17 @@ import static com.facebook.airlift.http.utils.jetty.ConcurrentScheduler.createCo
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Throwables.throwIfUnchecked;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.Streams.stream;
 import static java.lang.Math.toIntExact;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static org.eclipse.jetty.client.transport.HttpChannelAccessor.getHttpConnectionChannels;
 
 public class JettyHttpClient
         implements com.facebook.airlift.http.client.HttpClient
 {
-    static {
-        JettyLogging.setup();
-    }
-
     private static final String STATS_KEY = "airlift_stats";
     private static final long SWEEP_PERIOD_MILLIS = 5000;
 
@@ -162,7 +156,7 @@ public class JettyHttpClient
         if (config.getKeyStorePath() != null) {
             Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(config);
             if (pemKeyStore.isPresent()) {
-                sslContextFactory.setKeyStore(pemKeyStore.get());
+                sslContextFactory.setKeyStore(pemKeyStore.orElseThrow());
                 sslContextFactory.setKeyStorePassword("");
             }
             else {
@@ -173,7 +167,7 @@ public class JettyHttpClient
         if (config.getTrustStorePath() != null) {
             Optional<KeyStore> pemTrustStore = tryLoadPemTrustStore(config);
             if (pemTrustStore.isPresent()) {
-                sslContextFactory.setTrustStore(pemTrustStore.get());
+                sslContextFactory.setTrustStore(pemTrustStore.orElseThrow());
                 sslContextFactory.setTrustStorePassword("");
             }
             else {
@@ -226,24 +220,26 @@ public class JettyHttpClient
         httpClient.setMaxRequestsQueuedPerDestination(config.getMaxRequestsQueuedPerDestination());
 
         // disable cookies
-        httpClient.setCookieStore(new HttpCookieStore.Empty());
+        httpClient.setHttpCookieStore(new HttpCookieStore.Empty());
 
         // remove default user agent
         httpClient.setUserAgentField(null);
 
         // timeouts
         httpClient.setIdleTimeout(idleTimeoutMillis);
+        httpClient.setConnectBlocking(true);
         httpClient.setConnectTimeout(config.getConnectTimeout().toMillis());
         httpClient.setAddressResolutionTimeout(config.getConnectTimeout().toMillis());
+        httpClient.setDestinationIdleTimeout(idleTimeoutMillis);
 
         httpClient.setConnectBlocking(config.isConnectBlocking());
 
         HostAndPort socksProxy = config.getSocksProxy();
         if (socksProxy != null) {
-            httpClient.getProxyConfiguration().getProxies().add(new Socks4Proxy(socksProxy.getHost(), socksProxy.getPortOrDefault(1080)));
+            httpClient.getProxyConfiguration().addProxy(new Socks4Proxy(socksProxy.getHost(), socksProxy.getPortOrDefault(1080)));
         }
 
-        httpClient.setByteBufferPool(new MappedByteBufferPool());
+        httpClient.setByteBufferPool(new ArrayByteBufferPool.Tracking());
         QueuedThreadPool queuedThreadPool = createExecutor(name, config.getMinThreads(), config.getMaxThreads());
         httpClient.setExecutor(queuedThreadPool);
         // add queuedThreadPool as a managed bean to get its state in the client dumps
@@ -269,7 +265,7 @@ public class JettyHttpClient
         // configure logging
         this.logEnabled = config.isLogEnabled();
         if (logEnabled) {
-            String logFilePath = Paths.get(config.getLogPath(), format("%s-http-client.log", name)).toAbsolutePath().toString();
+            String logFilePath = Path.of(config.getLogPath(), format("%s-http-client.log", name)).toAbsolutePath().toString();
             requestLogger = new DefaultHttpClientLogger(
                     logFilePath,
                     config.getLogHistory(),
@@ -305,10 +301,10 @@ public class JettyHttpClient
         this.queuedThreadPoolMBean = new QueuedThreadPoolMBean((QueuedThreadPool) httpClient.getExecutor());
 
         this.activeConnectionsPerDestination = new ConnectionPoolDistribution(httpClient,
-                (distribution, connectionPool) -> distribution.add(connectionPool.getActiveConnections().size()));
+                (distribution, connectionPool) -> distribution.add(connectionPool.getActiveConnectionCount()));
 
         this.idleConnectionsPerDestination = new ConnectionPoolDistribution(httpClient,
-                (distribution, connectionPool) -> distribution.add(connectionPool.getIdleConnections().size()));
+                (distribution, connectionPool) -> distribution.add(connectionPool.getIdleConnectionCount()));
 
         this.queuedRequestsPerDestination = new DestinationDistribution(httpClient,
                 (distribution, destination) -> distribution.add(destination.getHttpExchanges().size()));
@@ -372,7 +368,7 @@ public class JettyHttpClient
 
     private static Optional<KeyStore> tryLoadPemKeyStore(HttpClientConfig config)
     {
-        File keyStoreFile = new File(config.getKeyStorePath());
+        File keyStoreFile = Path.of(config.getKeyStorePath()).toFile();
         try {
             if (!PemReader.isPem(keyStoreFile)) {
                 return Optional.empty();
@@ -392,7 +388,7 @@ public class JettyHttpClient
 
     private static Optional<KeyStore> tryLoadPemTrustStore(HttpClientConfig config)
     {
-        File trustStoreFile = new File(config.getTrustStorePath());
+        File trustStoreFile = Path.of(config.getTrustStorePath()).toFile();
         try {
             if (!PemReader.isPem(trustStoreFile)) {
                 return Optional.empty();
@@ -420,7 +416,7 @@ public class JettyHttpClient
             pool.setName("http-client-" + name);
             pool.setDaemon(true);
             pool.start();
-            pool.setStopTimeout(2000);
+            pool.setStopTimeout(100);
             pool.setDetailedDump(true);
             return pool;
         }
@@ -604,21 +600,28 @@ public class JettyHttpClient
         jettyRequest.method(finalRequest.getMethod());
 
         for (Entry<String, String> entry : finalRequest.getHeaders().entries()) {
-            jettyRequest.header(entry.getKey(), entry.getValue());
+            jettyRequest.headers(headers -> headers.add(entry.getKey(), entry.getValue()));
         }
 
         BodyGenerator bodyGenerator = finalRequest.getBodyGenerator();
         if (bodyGenerator != null) {
             if (bodyGenerator instanceof StaticBodyGenerator) {
                 StaticBodyGenerator staticBodyGenerator = (StaticBodyGenerator) bodyGenerator;
-                jettyRequest.content(new ChunkedBytesContentProvider(staticBodyGenerator.getBody(), requestBufferSizeInBytes));
+                jettyRequest.body(new ChunkedBytesContentProvider(staticBodyGenerator.getBody(), requestBufferSizeInBytes));
             }
             else if (bodyGenerator instanceof FileBodyGenerator) {
                 Path path = ((FileBodyGenerator) bodyGenerator).getPath();
-                jettyRequest.content(fileContentProvider(path));
+                PathRequestContent content;
+                try {
+                    content = new PathRequestContent(path);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(String.format("Failed to create a PathRequestContent from path [%s]", path), e);
+                }
+                jettyRequest.body(content);
             }
             else {
-                jettyRequest.content(new BodyGeneratorContentProvider(bodyGenerator, httpClient.getExecutor()));
+                jettyRequest.body(new BodyGeneratorContentProvider(bodyGenerator, httpClient.getExecutor()));
             }
         }
 
@@ -631,28 +634,6 @@ public class JettyHttpClient
         jettyRequest.idleTimeout(idleTimeoutMillis, MILLISECONDS);
 
         return jettyRequest;
-    }
-
-    private static ContentProvider fileContentProvider(Path path)
-    {
-        try {
-            PathContentProvider provider = new PathContentProvider(null, path);
-            provider.setByteBufferPool(new ByteBufferPool()
-            {
-                @Override
-                public ByteBuffer acquire(int size, boolean direct)
-                {
-                    return ByteBuffer.allocate(size);
-                }
-
-                @Override
-                public void release(ByteBuffer buffer) {}
-            });
-            return provider;
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     public List<HttpRequestFilter> getRequestFilters()
@@ -776,18 +757,6 @@ public class JettyHttpClient
         return requestLogger.getQueueSize();
     }
 
-    // todo this should be @Managed but operations with parameters are broken in jmx utils https://github.com/martint/jmxutils/issues/27
-    @SuppressWarnings("UnusedDeclaration")
-    public String dumpDestination(URI uri)
-    {
-        Destination destination = httpClient.getDestination(uri.getScheme(), uri.getHost(), uri.getPort());
-        if (destination == null) {
-            return null;
-        }
-
-        return dumpDestination(destination);
-    }
-
     private static String dumpDestination(Destination destination)
     {
         long now = System.nanoTime();
@@ -806,21 +775,27 @@ public class JettyHttpClient
                 .collect(Collectors.toList());
     }
 
-    private static List<org.eclipse.jetty.client.api.Request> getRequestForDestination(Destination destination)
+    private static List<org.eclipse.jetty.client.Request> getRequestForDestination(Destination destination)
     {
-        PoolingHttpDestination poolingHttpDestination = (PoolingHttpDestination) destination;
-        Queue<HttpExchange> httpExchanges = poolingHttpDestination.getHttpExchanges();
+        HttpDestination httpDestination = (HttpDestination) destination;
+        Queue<HttpExchange> httpExchanges = httpDestination.getHttpExchanges();
 
-        List<org.eclipse.jetty.client.api.Request> requests = httpExchanges.stream()
+        List<org.eclipse.jetty.client.Request> requests = httpExchanges.stream()
                 .map(HttpExchange::getRequest)
                 .collect(Collectors.toList());
 
-        ((DuplexConnectionPool) poolingHttpDestination.getConnectionPool()).getActiveConnections().stream()
-                .filter(HttpConnectionOverHTTP.class::isInstance)
-                .map(HttpConnectionOverHTTP.class::cast)
-                .map(connection -> connection.getHttpChannel().getHttpExchange())
-                .filter(Objects::nonNull)
-                .forEach(exchange -> requests.add(exchange.getRequest()));
+        if (httpDestination.getConnectionPool() instanceof AbstractConnectionPool) {
+            AbstractConnectionPool abstractPool = (AbstractConnectionPool) httpDestination.getConnectionPool();
+            ConnectionPoolAccessor.getActiveConnections(abstractPool)
+                    .stream()
+                    .filter(HttpConnection.class::isInstance)
+                    .map(HttpConnection.class::cast)
+                    .flatMap(connection -> stream(getHttpConnectionChannels(connection)))
+                    .map(HttpChannel::getHttpExchange)
+                    .map(HttpExchange::getRequest)
+                    .filter(Objects::nonNull)
+                    .forEach(requests::add);
+        }
 
         return requests.stream()
                 .filter(Objects::nonNull)

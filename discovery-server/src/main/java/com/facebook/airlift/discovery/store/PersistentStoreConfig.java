@@ -16,14 +16,14 @@
 package com.facebook.airlift.discovery.store;
 
 import com.facebook.airlift.configuration.Config;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class PersistentStoreConfig
 {
-    private File location = new File("db");
+    private File location = Path.of("db").toFile();
 
     @NotNull
     public File getLocation()

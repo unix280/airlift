@@ -19,8 +19,7 @@ import com.facebook.airlift.discovery.client.DiscoveryLookupClient;
 import com.facebook.airlift.discovery.client.ServiceSelector;
 import com.facebook.airlift.discovery.client.ServiceSelectorConfig;
 import com.facebook.airlift.discovery.client.ServiceSelectorFactory;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static java.util.Objects.requireNonNull;
 

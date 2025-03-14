@@ -18,10 +18,8 @@ package com.facebook.airlift.http.client;
 import com.facebook.airlift.http.client.StringResponseHandler.StringResponse;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
-
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -62,13 +60,13 @@ public class StringResponseHandler
                 return new StringResponse(
                         response.getStatusCode(),
                         response.getHeaders(),
-                        new String(ByteStreams.toByteArray(response.getInputStream()), mediaType.charset().or(UTF_8)));
+                        new String(response.getInputStream().readAllBytes(), mediaType.charset().or(UTF_8)));
             }
 
             return new StringResponse(
                     response.getStatusCode(),
                     response.getHeaders(),
-                    new String(ByteStreams.toByteArray(response.getInputStream()), UTF_8));
+                    new String(response.getInputStream().readAllBytes(), UTF_8));
         }
         catch (IOException e) {
             throw new UncheckedIOException(e);

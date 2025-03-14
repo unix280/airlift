@@ -16,16 +16,14 @@
 package com.facebook.drift.transport.netty.codec;
 
 import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.CheckReturnValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCounted;
-
-import javax.annotation.CheckReturnValue;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
-import static javax.annotation.meta.When.UNKNOWN;
 
 public class ThriftFrame
         implements ReferenceCounted
@@ -128,7 +126,7 @@ public class ThriftFrame
         return this;
     }
 
-    @CheckReturnValue(when = UNKNOWN)
+    @CheckReturnValue
     @Override
     public boolean release()
     {

@@ -22,19 +22,18 @@ import com.facebook.airlift.http.client.testing.TestingResponse;
 import com.facebook.airlift.log.Logger;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainer;
-
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -42,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.MoreCollectors.onlyElement;
 
 public class JaxrsTestingHttpProcessor
         implements TestingHttpClient.Processor
@@ -95,14 +94,14 @@ public class JaxrsTestingHttpProcessor
             request.getBodyGenerator().write(byteArrayOutputStream);
             byteArrayOutputStream.close();
             byte[] bytes = byteArrayOutputStream.toByteArray();
-            Entity<byte[]> entity = Entity.entity(bytes, (String) getOnlyElement(requestHeaders.get("Content-Type")));
+            Entity<byte[]> entity = Entity.entity(bytes, (String) requestHeaders.get("Content-Type").stream().collect(onlyElement()));
             invocation = invocationBuilder.build(request.getMethod(), entity);
         }
 
         // issue request, and handle exceptions
-        javax.ws.rs.core.Response result;
+        jakarta.ws.rs.core.Response result;
         try {
-            result = invocation.invoke(javax.ws.rs.core.Response.class);
+            result = invocation.invoke(jakarta.ws.rs.core.Response.class);
         }
         catch (ProcessingException exception) {
             if (trace) {

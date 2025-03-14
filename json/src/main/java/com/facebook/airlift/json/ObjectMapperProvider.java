@@ -34,8 +34,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.util.HashSet;
 import java.util.Map;

@@ -23,9 +23,8 @@ import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import jakarta.inject.Qualifier;
 import org.testng.annotations.Test;
-
-import javax.inject.Qualifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

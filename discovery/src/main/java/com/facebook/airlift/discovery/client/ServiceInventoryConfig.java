@@ -18,8 +18,7 @@ package com.facebook.airlift.discovery.client;
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.ConfigDescription;
 import com.facebook.airlift.units.Duration;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;

@@ -43,7 +43,7 @@ import static com.facebook.drift.integration.ClientTestUtils.HEADER_VALUE;
 import static com.facebook.drift.integration.DriftNettyTesterUtil.driftNettyTestClients;
 import static com.facebook.drift.integration.LegacyApacheThriftTesterUtil.legacyApacheThriftTestClients;
 import static com.facebook.drift.transport.netty.codec.Transport.HEADER;
-import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.nCopies;
 import static org.testng.Assert.assertEquals;
@@ -95,7 +95,7 @@ public class TestClientsWithDriftNettyServer
             }
         });
 
-        assertEquals(scribeService.getMessages(), newArrayList(concat(nCopies(invocationCount.get(), DRIFT_MESSAGES))));
+        assertEquals(scribeService.getMessages(), nCopies(invocationCount.get(), DRIFT_MESSAGES).stream().flatMap(List::stream).collect(toImmutableList()));
         assertEquals(scribeService.getHeaders(), newArrayList(nCopies(headerInvocationCount.get(), HEADER_VALUE)));
 
         return invocationCount.get();

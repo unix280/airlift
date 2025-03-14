@@ -1,8 +1,8 @@
 package com.facebook.airlift.bootstrap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Provider;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Provider;
 
 public class BarProvider
         implements Provider<BarInstance>

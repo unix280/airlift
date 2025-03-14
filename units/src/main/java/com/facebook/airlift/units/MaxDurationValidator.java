@@ -15,8 +15,9 @@
  */
 package com.facebook.airlift.units;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class MaxDurationValidator
         implements ConstraintValidator<MaxDuration, Duration>
@@ -26,7 +27,11 @@ public class MaxDurationValidator
     @Override
     public void initialize(MaxDuration duration)
     {
-        this.max = Duration.valueOf(duration.value());
+        try {
+            this.max = Duration.valueOf(duration.value());
+        } catch (IllegalArgumentException e) {
+            throw new ConstraintDeclarationException(e);
+        }
     }
 
     @Override

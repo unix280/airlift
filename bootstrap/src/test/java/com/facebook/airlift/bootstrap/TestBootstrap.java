@@ -22,9 +22,8 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.CreationException;
 import com.google.inject.Module;
 import com.google.inject.ProvisionException;
+import jakarta.inject.Inject;
 import org.testng.annotations.Test;
-
-import javax.inject.Inject;
 
 import java.util.HashMap;
 import java.util.Map;

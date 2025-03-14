@@ -19,8 +19,7 @@ import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.LegacyConfig;
 import com.facebook.airlift.units.Duration;
 import com.google.common.base.Preconditions;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.concurrent.TimeUnit;
 

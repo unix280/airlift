@@ -24,12 +24,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import jakarta.inject.Inject;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.weakref.jmx.testing.TestingMBeanServer;
 
-import javax.inject.Inject;
 import javax.management.MBeanServer;
 import javax.sql.DataSource;
 

@@ -1,9 +1,9 @@
 package com.facebook.airlift.http.client.spnego;
 
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.io.Content;
 
 import java.nio.ByteBuffer;
 
@@ -44,7 +44,8 @@ class ForwardingResponseListener
     }
 
     @Override
-    public void onContent(Response response, ByteBuffer content, Callback callback)
+    public void onContent(Response response, Content.Chunk content, Runnable callback)
+            throws Exception
     {
         delegate.onContent(response, content, callback);
     }

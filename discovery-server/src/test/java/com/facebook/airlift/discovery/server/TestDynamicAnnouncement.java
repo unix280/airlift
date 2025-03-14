@@ -19,9 +19,8 @@ import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
+import jakarta.validation.constraints.NotNull;
 import org.testng.annotations.Test;
-
-import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +37,7 @@ public class TestDynamicAnnouncement
     public void testRejectsNullEnvironment()
     {
         DynamicAnnouncement announcement = new DynamicAnnouncement(null, "pool", "/location", Collections.<DynamicServiceAnnouncement>emptySet());
-        assertFailsValidation(announcement, "environment", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "environment", "must not be null", NotNull.class);
     }
 
     @Test
@@ -53,14 +52,14 @@ public class TestDynamicAnnouncement
     public void testRejectsNullPool()
     {
         DynamicAnnouncement announcement = new DynamicAnnouncement("testing", null, "/location", Collections.<DynamicServiceAnnouncement>emptySet());
-        assertFailsValidation(announcement, "pool", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "pool", "must not be null", NotNull.class);
     }
 
     @Test
     public void testRejectsNullServiceAnnouncements()
     {
         DynamicAnnouncement announcement = new DynamicAnnouncement("testing", "pool", "/location", null);
-        assertFailsValidation(announcement, "serviceAnnouncements", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "serviceAnnouncements", "must not be null", NotNull.class);
     }
 
     @Test
@@ -69,7 +68,7 @@ public class TestDynamicAnnouncement
         DynamicAnnouncement announcement = new DynamicAnnouncement("testing", "pool", "/location", ImmutableSet.of(
                 new DynamicServiceAnnouncement(null, "type", Collections.<String, String>emptyMap())));
 
-        assertFailsValidation(announcement, "serviceAnnouncements[].id", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "serviceAnnouncements[].id", "must not be null", NotNull.class);
     }
 
     @Test

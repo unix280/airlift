@@ -14,8 +14,7 @@
 package com.facebook.airlift.stats;
 
 import com.facebook.airlift.units.Duration;
-
-import javax.annotation.concurrent.GuardedBy;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 

@@ -15,9 +15,8 @@
  */
 package com.facebook.drift.codec.metadata;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.google.common.collect.ImmutableList;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,6 +15,7 @@
  */
 package com.facebook.drift.codec.internal;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.facebook.drift.TException;
 import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.protocol.TField;
@@ -24,8 +25,6 @@ import com.facebook.drift.protocol.TProtocolReader;
 import com.facebook.drift.protocol.TProtocolUtil;
 import com.facebook.drift.protocol.TSet;
 import com.facebook.drift.protocol.TType;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

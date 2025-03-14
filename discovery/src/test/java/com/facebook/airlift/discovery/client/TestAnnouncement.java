@@ -17,7 +17,6 @@ package com.facebook.airlift.discovery.client;
 
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import org.testng.annotations.Test;
 
@@ -28,6 +27,7 @@ import static com.facebook.airlift.discovery.client.ServiceAnnouncement.serviceA
 import static com.facebook.airlift.json.JsonCodec.jsonCodec;
 import static com.facebook.airlift.json.JsonCodec.mapJsonCodec;
 import static com.facebook.airlift.testing.EquivalenceTester.equivalenceTester;
+import static com.google.common.collect.MoreCollectors.onlyElement;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -53,7 +53,7 @@ public class TestAnnouncement
 
         // set id in expected
         List<Map<String, Object>> services = toServices(expected.get("services"));
-        services.get(0).put("id", Iterables.getOnlyElement(announcement.getServices()).getId().toString());
+        services.get(0).put("id", announcement.getServices().stream().collect(onlyElement()).getId().toString());
 
         assertEquals(actual, expected);
     }

@@ -25,11 +25,10 @@ import com.facebook.drift.transport.netty.client.ThriftClientHandler.ThriftReque
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
-
-import javax.annotation.concurrent.GuardedBy;
 
 import java.io.IOException;
 import java.util.Optional;

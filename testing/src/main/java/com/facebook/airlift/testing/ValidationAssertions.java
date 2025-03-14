@@ -16,12 +16,11 @@
 package com.facebook.airlift.testing;
 
 import com.google.common.annotations.Beta;
-import org.apache.bval.jsr.ApacheValidationProvider;
-
-import javax.annotation.concurrent.GuardedBy;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import org.hibernate.validator.HibernateValidator;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -34,7 +33,11 @@ import static org.testng.Assert.fail;
 public final class ValidationAssertions
 {
     @GuardedBy("VALIDATOR")
-    private static final Validator VALIDATOR = Validation.byProvider(ApacheValidationProvider.class).configure().buildValidatorFactory().getValidator();
+    private static final Validator VALIDATOR = Validation
+            .byProvider(HibernateValidator.class)
+            .configure()
+            .buildValidatorFactory()
+            .getValidator();
 
     private ValidationAssertions() {}
 

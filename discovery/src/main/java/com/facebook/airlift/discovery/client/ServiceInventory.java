@@ -23,14 +23,14 @@ import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.units.Duration;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Managed;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -155,7 +155,7 @@ public class ServiceInventory
                 serviceDescriptorsRepresentation = httpClient.execute(requestBuilder.build(), createJsonResponseHandler(serviceDescriptorsCodec));
             }
             else {
-                File file = new File(serviceInventoryUri);
+                File file = Path.of(serviceInventoryUri).toFile();
                 serviceDescriptorsRepresentation = serviceDescriptorsCodec.fromJson(readAllBytes(file.toPath()));
             }
 

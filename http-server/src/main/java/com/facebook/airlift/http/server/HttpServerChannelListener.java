@@ -13,90 +13,112 @@
  */
 package com.facebook.airlift.http.server;
 
-import org.eclipse.jetty.server.HttpChannel.Listener;
+import jakarta.annotation.Nullable;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-
-import javax.annotation.Nullable;
+import org.eclipse.jetty.server.handler.EventsHandler;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class HttpServerChannelListener
-        implements Listener
+        extends EventsHandler
 {
-    private static final String REQUEST_BEGIN_ATTRIBUTE = HttpServerChannelListener.class.getName() + ".begin";
-    private static final String REQUEST_BEGIN_TO_DISPATCH_ATTRIBUTE = HttpServerChannelListener.class.getName() + ".begin_to_dispatch";
-    private static final String REQUEST_BEGIN_TO_END_ATTRIBUTE = HttpServerChannelListener.class.getName() + ".begin_to_end";
+    private static final String REQUEST_BEFORE_HANDLE = HttpServerChannelListener.class.getName() + ".before_handle";
+    private static final String REQUEST_RESPONSE_BEGIN = HttpServerChannelListener.class.getName() + ".response_begin";
     private static final String RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE = HttpServerChannelListener.class.getName() + ".response_content_timestamps";
+    private static final String RESPONSE_CONTENT_SIZES_ATTRIBUTE = HttpServerChannelListener.class.getName() + ".response_content_sizes";
+    private static final String REQUEST_AFTER_HANDLE = HttpServerChannelListener.class.getName() + ".after_handle";
 
     private final DelimitedRequestLog logger;
 
-    public HttpServerChannelListener(DelimitedRequestLog logger)
+    public HttpServerChannelListener(DelimitedRequestLog logger, Handler handler)
     {
+        super(handler);
         this.logger = requireNonNull(logger, "logger is null");
     }
 
     @Override
-    public void onRequestBegin(Request request)
+    protected void onBeforeHandling(Request request)
     {
-        request.setAttribute(REQUEST_BEGIN_ATTRIBUTE, System.nanoTime());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void onBeforeDispatch(Request request)
-    {
-        long requestBeginTime = (Long) request.getAttribute(REQUEST_BEGIN_ATTRIBUTE);
-        request.setAttribute(REQUEST_BEGIN_TO_DISPATCH_ATTRIBUTE, System.nanoTime() - requestBeginTime);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void onRequestEnd(Request request)
-    {
-        long requestBeginTime = (Long) request.getAttribute(REQUEST_BEGIN_ATTRIBUTE);
-        request.setAttribute(REQUEST_BEGIN_TO_END_ATTRIBUTE, System.nanoTime() - requestBeginTime);
+        request.setAttribute(REQUEST_BEFORE_HANDLE, System.nanoTime());
     }
 
     @Override
-    public void onResponseBegin(Request request)
+    protected void onResponseBegin(Request request, int status, HttpFields headers)
     {
-        if (request.getAttribute(REQUEST_BEGIN_TO_END_ATTRIBUTE) == null) {
-            onRequestEnd(request);
+        request.setAttribute(REQUEST_RESPONSE_BEGIN, System.nanoTime());
+        if (request.getAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE) == null) {
+            request.setAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE, new ArrayList<>());
         }
-        request.setAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE, new ArrayList<Long>());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void onResponseContent(Request request, ByteBuffer content)
+    protected void onResponseWrite(Request request, boolean last, ByteBuffer content)
     {
+        if (request.getAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE) == null) {
+            request.setAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE, new ArrayList<>());
+        }
         List<Long> contentTimestamps = (List<Long>) request.getAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE);
         contentTimestamps.add(System.nanoTime());
+
+        if (request.getAttribute(RESPONSE_CONTENT_SIZES_ATTRIBUTE) == null) {
+            request.setAttribute(RESPONSE_CONTENT_SIZES_ATTRIBUTE, new AtomicLong(0L));
+        }
+        AtomicLong responseSize = (AtomicLong) request.getAttribute(RESPONSE_CONTENT_SIZES_ATTRIBUTE);
+        responseSize.addAndGet(content.remaining());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void onComplete(Request request)
+    protected void onComplete(Request request, @Nullable Throwable failure)
     {
-        List<Long> contentTimestamps = (List<Long>) request.getAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE);
+        onCompleteHelper(request, -1, HttpFields.EMPTY, failure);
+    }
+
+    @Override
+    protected void onComplete(Request request, int status, HttpFields headers, @Nullable Throwable failure)
+    {
+        onCompleteHelper(request, status, headers, failure);
+    }
+
+    private void onCompleteHelper(Request request, int status, HttpFields headers, @Nullable Throwable failure)
+    {
+        long requestBeginTime = (Long) request.getAttribute(REQUEST_BEFORE_HANDLE);
+        List<Long> contentTimestamps = Optional.ofNullable((List<Long>) request.getAttribute(RESPONSE_CONTENT_TIMESTAMPS_ATTRIBUTE))
+                .orElseGet(ArrayList::new);
         long firstToLastContentTimeInMillis = -1;
-        if (contentTimestamps.size() > 0) {
+        if (!contentTimestamps.isEmpty()) {
             firstToLastContentTimeInMillis = NANOSECONDS.toMillis(contentTimestamps.get(contentTimestamps.size() - 1) - contentTimestamps.get(0));
         }
-        long beginToDispatchMillis = NANOSECONDS.toMillis((Long) request.getAttribute(REQUEST_BEGIN_TO_DISPATCH_ATTRIBUTE));
-        long beginToEndMillis = NANOSECONDS.toMillis((Long) request.getAttribute(REQUEST_BEGIN_TO_END_ATTRIBUTE));
+        Long afterHandleMillis = (Long) request.getAttribute(REQUEST_AFTER_HANDLE);
+        if (afterHandleMillis == null) {
+            afterHandleMillis = NANOSECONDS.toMillis(System.nanoTime());
+        }
+        long responseSize = Optional.ofNullable((AtomicLong) request.getAttribute(RESPONSE_CONTENT_SIZES_ATTRIBUTE))
+                .map(AtomicLong::get)
+                .orElse(0L);
         logger.log(request,
-                request.getResponse(),
-                beginToDispatchMillis,
-                beginToEndMillis,
+                responseSize,
+                status,
+                headers,
+                requestBeginTime,
+                afterHandleMillis,
                 firstToLastContentTimeInMillis,
                 processContentTimestamps(contentTimestamps));
+    }
+
+    @Override
+    protected void onAfterHandling(Request request, boolean handled, Throwable failure)
+    {
+        request.setAttribute(REQUEST_AFTER_HANDLE, System.nanoTime());
     }
 
     /**

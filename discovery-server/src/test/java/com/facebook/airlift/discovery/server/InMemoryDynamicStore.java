@@ -17,9 +17,8 @@ package com.facebook.airlift.discovery.server;
 
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableSet;
-
-import javax.annotation.concurrent.ThreadSafe;
-import javax.inject.Inject;
+import com.google.errorprone.annotations.ThreadSafe;
+import jakarta.inject.Inject;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;

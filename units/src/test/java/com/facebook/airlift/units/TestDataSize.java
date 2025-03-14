@@ -15,14 +15,14 @@
  */
 package com.facebook.airlift.units;
 
+import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableList;
-import io.airlift.json.JsonCodec;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
 
-import static io.airlift.testing.EquivalenceTester.comparisonTester;
+import static com.facebook.airlift.testing.EquivalenceTester.comparisonTester;
 import static com.facebook.airlift.units.DataSize.Unit.BYTE;
 import static com.facebook.airlift.units.DataSize.Unit.GIGABYTE;
 import static com.facebook.airlift.units.DataSize.Unit.KILOBYTE;
@@ -359,6 +359,6 @@ public class TestDataSize
                 new Object[] {PETABYTE, GIGABYTE, 1024 * 1024},
                 new Object[] {PETABYTE, TERABYTE, 1024},
                 new Object[] {PETABYTE, PETABYTE, 1},
-                };
+        };
     }
 }

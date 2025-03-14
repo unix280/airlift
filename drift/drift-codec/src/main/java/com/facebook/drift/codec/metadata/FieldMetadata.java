@@ -18,8 +18,7 @@ package com.facebook.drift.codec.metadata;
 import com.facebook.drift.annotations.ThriftField;
 import com.facebook.drift.annotations.ThriftIdlAnnotation;
 import com.google.common.collect.ImmutableMap;
-
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Map;

@@ -3,8 +3,7 @@ package com.facebook.airlift.http.client.thrift;
 import com.facebook.airlift.http.client.HeaderName;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.util.List;
 

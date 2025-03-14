@@ -31,8 +31,7 @@ import com.facebook.drift.codec.metadata.ThriftStructMetadata;
 import com.facebook.drift.protocol.TProtocolException;
 import com.facebook.drift.protocol.TProtocolReader;
 import com.facebook.drift.protocol.TProtocolWriter;
-
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

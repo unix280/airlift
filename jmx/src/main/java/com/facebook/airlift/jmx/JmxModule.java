@@ -19,9 +19,9 @@ import com.facebook.airlift.discovery.client.ServiceAnnouncement;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.management.MBeanServer;
 
 import java.lang.management.ManagementFactory;
@@ -47,14 +47,8 @@ public class JmxModule
 
         discoveryBinder(binder).bindServiceAnnouncement(JmxAnnouncementProvider.class);
 
-        if (JavaVersion.current().getMajor() < 9) {
-            binder.bind(JmxAgent8.class).in(Scopes.SINGLETON);
-            binder.bind(JmxAgent.class).to(JmxAgent8.class);
-        }
-        else {
-            binder.bind(JmxAgent9.class).in(Scopes.SINGLETON);
-            binder.bind(JmxAgent.class).to(JmxAgent9.class);
-        }
+        binder.bind(JmxAgent9.class).in(Scopes.SINGLETON);
+        binder.bind(JmxAgent.class).to(JmxAgent9.class);
     }
 
     static class JmxAnnouncementProvider

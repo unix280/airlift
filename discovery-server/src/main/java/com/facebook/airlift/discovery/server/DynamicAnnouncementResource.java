@@ -16,22 +16,21 @@
 package com.facebook.airlift.discovery.server;
 
 import com.facebook.airlift.node.NodeInfo;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import static com.google.common.base.MoreObjects.firstNonNull;
+import static jakarta.ws.rs.core.Response.Status.ACCEPTED;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static java.lang.String.format;
-import static javax.ws.rs.core.Response.Status.ACCEPTED;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static java.util.Objects.requireNonNullElse;
 
 @Path("/v1/announcement/{node_id}")
 public class DynamicAnnouncementResource
@@ -56,7 +55,7 @@ public class DynamicAnnouncementResource
                     .build();
         }
 
-        String location = firstNonNull(announcement.getLocation(), "/somewhere/" + nodeId.toString());
+        String location = requireNonNullElse(announcement.getLocation(), "/somewhere/" + nodeId.toString());
 
         DynamicAnnouncement announcementWithLocation = DynamicAnnouncement.copyOf(announcement)
                 .setLocation(location)

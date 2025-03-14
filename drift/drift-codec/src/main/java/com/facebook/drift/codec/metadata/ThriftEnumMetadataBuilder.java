@@ -15,9 +15,8 @@
  */
 package com.facebook.drift.codec.metadata;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.facebook.drift.annotations.ThriftEnum;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

@@ -15,17 +15,16 @@ package com.facebook.airlift.http.server;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-
-import javax.inject.Inject;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,12 +34,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.io.ByteStreams.copy;
-import static com.google.common.io.ByteStreams.nullOutputStream;
 import static com.google.common.net.HttpHeaders.WWW_AUTHENTICATE;
 import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static java.io.OutputStream.nullOutputStream;
 import static java.util.Objects.requireNonNull;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 public class AuthenticationFilter
         implements Filter
@@ -111,7 +109,7 @@ public class AuthenticationFilter
         // Clients should use the response body rather than the HTTP status
         // message (which does not exist with HTTP/2), but the status message
         // still needs to be sent for compatibility with existing clients.
-        response.setStatus(SC_UNAUTHORIZED, error);
+        response.setStatus(SC_UNAUTHORIZED);
         response.setContentType(PLAIN_TEXT_UTF_8.toString());
         try (PrintWriter writer = response.getWriter()) {
             writer.write(error);
@@ -141,7 +139,7 @@ public class AuthenticationFilter
         // in the client by reading and discarding the entire body of the
         // unauthenticated request before sending the response.
         try (InputStream inputStream = request.getInputStream()) {
-            copy(inputStream, nullOutputStream());
+            inputStream.transferTo(nullOutputStream());
         }
     }
 }

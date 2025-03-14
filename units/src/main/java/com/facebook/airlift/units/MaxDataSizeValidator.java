@@ -13,8 +13,9 @@
  */
 package com.facebook.airlift.units;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class MaxDataSizeValidator
         implements ConstraintValidator<MaxDataSize, DataSize>
@@ -24,7 +25,12 @@ public class MaxDataSizeValidator
     @Override
     public void initialize(MaxDataSize dataSize)
     {
-        this.max = DataSize.valueOf(dataSize.value());
+        try {
+            this.max = DataSize.valueOf(dataSize.value());
+        }
+        catch (IllegalArgumentException e) {
+            throw new ConstraintDeclarationException(e);
+        }
     }
 
     @Override

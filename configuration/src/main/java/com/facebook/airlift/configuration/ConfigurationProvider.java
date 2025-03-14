@@ -16,8 +16,7 @@
 package com.facebook.airlift.configuration;
 
 import com.google.inject.Provider;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.Objects;
 import java.util.Optional;

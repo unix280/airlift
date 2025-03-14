@@ -13,7 +13,7 @@
  */
 package com.facebook.airlift.http.server;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
@@ -21,7 +21,7 @@ import java.security.cert.X509Certificate;
 public class CertificateAuthenticator
         implements Authenticator
 {
-    private static final String X509_ATTRIBUTE = "javax.servlet.request.X509Certificate";
+    private static final String X509_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
 
     @Override
     public Principal authenticate(HttpServletRequest request)

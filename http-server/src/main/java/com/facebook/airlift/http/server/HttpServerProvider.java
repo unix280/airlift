@@ -22,13 +22,13 @@ import com.facebook.airlift.tracetoken.TraceTokenManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
+import jakarta.annotation.Nullable;
+import jakarta.inject.Provider;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
 import org.eclipse.jetty.security.LoginService;
 
-import javax.annotation.Nullable;
-import javax.inject.Provider;
 import javax.management.MBeanServer;
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
 
 import java.util.Map;
 import java.util.Set;

@@ -34,10 +34,10 @@ import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import jakarta.inject.Inject;
+import jakarta.inject.Qualifier;
 import org.weakref.jmx.guice.MBeanModule;
 
-import javax.inject.Inject;
-import javax.inject.Qualifier;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
@@ -204,7 +205,7 @@ final class ClientTestUtils
         if (resource == null) {
             throw new IllegalArgumentException("Resource not found " + name);
         }
-        return new File(resource.getFile());
+        return Paths.get(resource.getFile()).toFile();
     }
 
     @Target({FIELD, PARAMETER, METHOD})

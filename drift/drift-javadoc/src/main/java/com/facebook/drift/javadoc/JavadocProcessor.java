@@ -23,7 +23,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -62,7 +61,7 @@ import static javax.tools.Diagnostic.Kind.WARNING;
         ThriftAnnotations.THRIFT_STRUCT})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class JavadocProcessor
-        extends AbstractProcessor
+        extends javax.annotation.processing.AbstractProcessor
 {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round)

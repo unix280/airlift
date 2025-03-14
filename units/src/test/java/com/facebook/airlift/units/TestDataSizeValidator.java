@@ -13,13 +13,12 @@
  */
 package com.facebook.airlift.units;
 
-import org.apache.bval.jsr.ApacheValidationProvider;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
+import org.hibernate.validator.HibernateValidator;
 import org.testng.annotations.Test;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 
 import java.util.Optional;
 import java.util.Set;
@@ -34,7 +33,7 @@ import static org.testng.Assert.assertTrue;
 
 public class TestDataSizeValidator
 {
-    private static final Validator VALIDATOR = Validation.byProvider(ApacheValidationProvider.class).configure().buildValidatorFactory().getValidator();
+    private static final Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory().getValidator();
 
     @Test
     public void testMaxDataSizeValidator()
@@ -82,16 +81,14 @@ public class TestDataSizeValidator
     {
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenMinAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: size is not a valid data size string: broken");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MinAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant com.facebook.airlift.units.MinDataSize ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("HV000030: No validator could be found for constraint 'com.facebook.airlift.units.MinDataSize' validating type 'java.util.Optional<com.facebook.airlift.units.DataSize>'. Check configuration for 'constrainedByMin'");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMinAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: size is not a valid data size string: broken");
     }
 
@@ -100,16 +97,14 @@ public class TestDataSizeValidator
     {
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenMaxAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: size is not a valid data size string: broken");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MaxAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant com.facebook.airlift.units.MaxDataSize ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("HV000030: No validator could be found for constraint 'com.facebook.airlift.units.MaxDataSize' validating type 'java.util.Optional<com.facebook.airlift.units.DataSize>'. Check configuration for 'constrainedByMin'");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMaxAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: size is not a valid data size string: broken");
     }
 

@@ -16,11 +16,10 @@ package com.facebook.airlift.http.client.jetty;
 import com.facebook.airlift.http.client.jetty.HttpClientLogger.RequestInfo;
 import com.facebook.airlift.http.client.jetty.HttpClientLogger.ResponseInfo;
 import com.google.common.annotations.VisibleForTesting;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
+import jakarta.annotation.Nullable;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.http.HttpFields;
-
-import javax.annotation.Nullable;
 
 import java.time.Instant;
 import java.util.Locale;
@@ -171,7 +170,7 @@ class HttpRequestEvent
         int responseCode = NO_RESPONSE;
         if (response.isPresent()) {
             responseSize = responseInfo.getResponseSize();
-            responseCode = response.get().getStatus();
+            responseCode = response.orElseThrow().getStatus();
         }
 
         long requestTotalTimeNanos = responseInfo.getResponseCompleteTimestamp() - requestInfo.getRequestCreatedTimestamp();
@@ -212,7 +211,7 @@ class HttpRequestEvent
             return Optional.empty();
         }
 
-        String className = failure.get().getClass().getSimpleName().toUpperCase(Locale.US);
+        String className = failure.orElseThrow().getClass().getSimpleName().toUpperCase(Locale.US);
 
         if (className.endsWith("EXCEPTION")) {
             return Optional.of(className.substring(0, className.lastIndexOf("EXCEPTION")));

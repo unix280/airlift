@@ -25,13 +25,11 @@ import com.facebook.airlift.http.client.ResponseHandler;
 import com.facebook.airlift.json.JsonCodec;
 import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.units.Duration;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
 import com.google.common.util.concurrent.ListenableFuture;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
-
-import javax.inject.Inject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -142,7 +140,7 @@ public class HttpDiscoveryLookupClient
 
                 byte[] json;
                 try {
-                    json = ByteStreams.toByteArray(response.getInputStream());
+                    json = response.getInputStream().readAllBytes();
                 }
                 catch (IOException e) {
                     throw new DiscoveryException(format("Lookup of %s failed", type), e);

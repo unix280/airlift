@@ -17,11 +17,10 @@ package com.facebook.airlift.discovery.store;
 
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.Streams;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Managed;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;

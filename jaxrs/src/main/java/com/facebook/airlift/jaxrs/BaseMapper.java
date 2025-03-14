@@ -14,11 +14,10 @@
 package com.facebook.airlift.jaxrs;
 
 import com.google.common.collect.ImmutableSet;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.MessageBodyReader;
-import javax.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.MessageBodyReader;
+import jakarta.ws.rs.ext.MessageBodyWriter;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,7 +42,7 @@ public abstract class BaseMapper
             .add(java.io.Writer.class)
             .add(byte[].class)
             .add(char[].class)
-            .add(javax.ws.rs.core.StreamingOutput.class)
+            .add(jakarta.ws.rs.core.StreamingOutput.class)
             .add(Response.class)
             .build();
 

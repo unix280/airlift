@@ -39,7 +39,7 @@ public class TestJsonEventSerializer
         FixedDummyEventClass event = TestingUtils.getEvents().get(0);
         eventSerializer.serialize(event, jsonGenerator);
 
-        String json = out.toString(UTF_8.name());
+        String json = out.toString(UTF_8);
         assertEquals(json, TestingUtils.getNormalizedJson("event.json"));
     }
 }

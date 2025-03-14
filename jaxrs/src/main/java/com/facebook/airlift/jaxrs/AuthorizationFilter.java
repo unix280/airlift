@@ -21,14 +21,13 @@ import com.facebook.airlift.http.server.HttpServerConfig;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 
 import java.security.Principal;
 import java.util.Map;
@@ -116,7 +115,7 @@ public class AuthorizationFilter
             }
         }
         else if (roleMaps.containsKey(resourceInfo.getResourceClass())) {
-            allowedRoles = Optional.of(allowedRoles.get()
+            allowedRoles = Optional.of(allowedRoles.orElseThrow()
                     .stream()
                     .map(role -> roleMaps.get(resourceInfo.getResourceClass()).getOrDefault(role, role))
                     .collect(toImmutableSet()));
@@ -124,7 +123,7 @@ public class AuthorizationFilter
 
         AuthorizationResult result = authorizer.authorize(
                 principal,
-                allowedRoles.get(),
+                allowedRoles.orElseThrow(),
                 request.getUriInfo().getRequestUri().toString());
         if (!result.isAllowed()) {
             request.abortWith(Response.status(Response.Status.FORBIDDEN)

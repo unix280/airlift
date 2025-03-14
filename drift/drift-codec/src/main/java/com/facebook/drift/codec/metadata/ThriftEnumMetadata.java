@@ -19,8 +19,7 @@ import com.facebook.drift.annotations.ThriftEnumUnknownValue;
 import com.facebook.drift.annotations.ThriftEnumValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

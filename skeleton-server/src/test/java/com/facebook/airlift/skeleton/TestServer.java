@@ -22,7 +22,7 @@ import java.net.URI;
 
 import static com.facebook.airlift.http.client.Request.Builder.prepareGet;
 import static com.facebook.airlift.http.client.StatusResponseHandler.createStatusResponseHandler;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 @Test(singleThreaded = true)

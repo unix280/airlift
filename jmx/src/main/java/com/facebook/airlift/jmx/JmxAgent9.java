@@ -19,8 +19,8 @@ import com.facebook.airlift.log.Logger;
 import com.google.common.net.HostAndPort;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.management.remote.JMXServiceURL;
 
 import java.io.IOException;

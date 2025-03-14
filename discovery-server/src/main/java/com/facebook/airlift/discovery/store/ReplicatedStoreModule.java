@@ -18,19 +18,18 @@ package com.facebook.airlift.discovery.store;
 import com.facebook.airlift.discovery.client.ServiceSelector;
 import com.facebook.airlift.http.client.HttpClient;
 import com.facebook.airlift.node.NodeInfo;
+import com.google.errorprone.annotations.ThreadSafe;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.weakref.jmx.MBeanExporter;
-
-import javax.annotation.PreDestroy;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import java.lang.annotation.Annotation;
 import java.time.ZonedDateTime;
@@ -104,7 +103,7 @@ public class ReplicatedStoreModule
 
     @ThreadSafe
     private static class ReplicatorProvider
-            implements javax.inject.Provider<Replicator>
+            implements jakarta.inject.Provider<Replicator>
     {
         private final String name;
         private final Key<? extends LocalStore> localStoreKey;

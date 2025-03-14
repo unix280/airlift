@@ -2,8 +2,7 @@ package com.facebook.airlift.discovery.client;
 
 import com.facebook.airlift.log.Logger;
 import com.facebook.airlift.units.Duration;
-
-import javax.annotation.concurrent.GuardedBy;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;

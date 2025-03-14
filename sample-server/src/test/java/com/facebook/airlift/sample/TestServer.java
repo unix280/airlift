@@ -55,9 +55,9 @@ import static com.facebook.airlift.json.JsonCodec.mapJsonCodec;
 import static com.facebook.airlift.sample.PersonEvent.personAdded;
 import static com.facebook.airlift.sample.PersonEvent.personRemoved;
 import static com.facebook.airlift.testing.Assertions.assertEqualsIgnoreOrder;
+import static jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -174,7 +174,7 @@ public class TestServer
                         .build(),
                 createStatusResponseHandler());
 
-        assertEquals(response.getStatusCode(), javax.ws.rs.core.Response.Status.CREATED.getStatusCode());
+        assertEquals(response.getStatusCode(), jakarta.ws.rs.core.Response.Status.CREATED.getStatusCode());
 
         assertEquals(store.get("foo"), new Person("foo@example.com", "Mr Foo"));
 
@@ -195,7 +195,7 @@ public class TestServer
                         .build(),
                 createStatusResponseHandler());
 
-        assertEquals(response.getStatusCode(), javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode());
+        assertEquals(response.getStatusCode(), jakarta.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode());
 
         assertNull(store.get("foo"));
 
@@ -215,7 +215,7 @@ public class TestServer
                         .build(),
                 createStatusResponseHandler());
 
-        assertEquals(response.getStatusCode(), javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode());
+        assertEquals(response.getStatusCode(), jakarta.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test

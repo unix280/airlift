@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.discovery.client;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.concurrent.ScheduledExecutorService;
 

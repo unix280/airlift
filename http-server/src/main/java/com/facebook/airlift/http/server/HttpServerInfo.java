@@ -17,8 +17,7 @@ package com.facebook.airlift.http.server;
 
 import com.facebook.airlift.node.NodeInfo;
 import com.google.common.annotations.VisibleForTesting;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

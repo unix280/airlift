@@ -40,6 +40,7 @@ import com.facebook.drift.transport.netty.ssl.TChannelBufferInputTransport;
 import com.facebook.drift.transport.netty.ssl.TChannelBufferOutputTransport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractFuture;
+import com.google.errorprone.annotations.ThreadSafe;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelDuplexHandler;
@@ -48,8 +49,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ScheduledFuture;
-
-import javax.annotation.concurrent.ThreadSafe;
 
 import java.util.List;
 import java.util.Map;

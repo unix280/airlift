@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.discovery.store;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.nio.ByteBuffer;
 import java.util.EnumSet;

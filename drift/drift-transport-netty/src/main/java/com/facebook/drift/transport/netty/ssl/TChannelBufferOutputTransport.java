@@ -15,15 +15,12 @@
  */
 package com.facebook.drift.transport.netty.ssl;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.facebook.drift.protocol.TTransport;
+import com.google.errorprone.annotations.CheckReturnValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ReferenceCounted;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.NotThreadSafe;
-
-import static javax.annotation.meta.When.UNKNOWN;
 
 @NotThreadSafe
 public class TChannelBufferOutputTransport
@@ -92,7 +89,7 @@ public class TChannelBufferOutputTransport
         return this;
     }
 
-    @CheckReturnValue(when = UNKNOWN)
+    @CheckReturnValue
     @Override
     public boolean release()
     {

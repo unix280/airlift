@@ -26,6 +26,7 @@ import com.facebook.airlift.units.Duration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.facebook.airlift.http.client.jetty.HttpRequestEvent.createHttpRequestEvent;
@@ -114,13 +115,13 @@ class DefaultHttpClientLogger
         // these .tmp files are log files that are about to be compressed.
         // This method recovers them so that they aren't orphaned
 
-        File logPathFile = new File(logPath).getParentFile();
+        File logPathFile = Path.of(logPath).getParent().toFile();
         File[] tempFiles = logPathFile.listFiles((directory, name) -> name.endsWith(TEMP_FILE_EXTENSION));
 
         if (tempFiles != null) {
             for (File tempFile : tempFiles) {
                 String newName = tempFile.getName().substring(0, tempFile.getName().length() - TEMP_FILE_EXTENSION.length());
-                File newFile = new File(tempFile.getParent(), newName + LOG_FILE_EXTENSION);
+                File newFile = Path.of(tempFile.getParent(), newName + LOG_FILE_EXTENSION).toFile();
                 if (tempFile.renameTo(newFile)) {
                     LOG.info("Recovered temp file: %s", tempFile);
                 }

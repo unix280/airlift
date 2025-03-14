@@ -10,6 +10,7 @@ import ch.qos.logback.core.util.FileSize;
 import com.facebook.airlift.units.DataSize;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.logging.ErrorManager;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -142,7 +143,7 @@ final class RollingFileHandler
         // These .tmp files are log files that are about to be compressed.
         // This method recovers them so that they aren't orphaned.
 
-        File logPathFile = new File(logPath).getParentFile();
+        File logPathFile = Paths.get(logPath).getParent().toFile();
         File[] tempFiles = logPathFile.listFiles((dir, name) -> name.endsWith(TEMP_FILE_EXTENSION));
 
         if (tempFiles == null) {
@@ -151,7 +152,7 @@ final class RollingFileHandler
 
         for (File tempFile : tempFiles) {
             String newName = tempFile.getName().substring(0, tempFile.getName().length() - TEMP_FILE_EXTENSION.length());
-            File newFile = new File(tempFile.getParent(), newName + LOG_FILE_EXTENSION);
+            File newFile = Paths.get(tempFile.getParent(), newName + LOG_FILE_EXTENSION).toFile();
 
             if (!tempFile.renameTo(newFile)) {
                 reportError(format("Could not rename temp file [%s] to [%s]", tempFile, newFile), null, ErrorManager.OPEN_FAILURE);

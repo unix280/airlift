@@ -27,17 +27,16 @@ import com.facebook.airlift.node.testing.TestingNodeModule;
 import com.facebook.airlift.testing.Closeables;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Module;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response.Status;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response.Status;
 
 import java.io.IOException;
 import java.util.List;

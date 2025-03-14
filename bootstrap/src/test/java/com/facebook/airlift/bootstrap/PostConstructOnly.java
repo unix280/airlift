@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.bootstrap;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class PostConstructOnly

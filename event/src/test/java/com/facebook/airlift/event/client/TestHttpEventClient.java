@@ -23,22 +23,20 @@ import com.facebook.airlift.http.client.jetty.JettyHttpClient;
 import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.units.Duration;
 import com.google.common.io.CharStreams;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.joda.time.DateTime;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -123,7 +121,6 @@ public class TestHttpEventClient
 
         for (Future<Void> future : futures) {
             future.get();
-            System.out.println("future " + future);
         }
         assertEquals(servlet.lastPath, "/v2/event");
         assertEquals(servlet.lastBody, getNormalizedJson("events.json"));
@@ -189,7 +186,7 @@ public class TestHttpEventClient
         ServletHolder servletHolder = new ServletHolder(servlet);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.addServlet(servletHolder, "/*");
-        HandlerCollection handlers = new HandlerCollection();
+        ContextHandlerCollection handlers = new ContextHandlerCollection();
         handlers.addHandler(context);
         server.setHandler(handlers);
         return server;
@@ -207,7 +204,7 @@ public class TestHttpEventClient
 
         @Override
         protected void doPost(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException
+                throws IOException
         {
             lastPath = request.getPathInfo();
             lastBody = CharStreams.toString(new InputStreamReader(request.getInputStream(), UTF_8));

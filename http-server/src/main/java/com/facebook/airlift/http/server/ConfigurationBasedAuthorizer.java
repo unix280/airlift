@@ -18,9 +18,10 @@ package com.facebook.airlift.http.server;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +53,7 @@ public class ConfigurationBasedAuthorizer
     {
         requireNonNull(roleMapFilePath, "roleMapFilePath is null");
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream(roleMapFilePath)) {
+        try (InputStream inputStream = Files.newInputStream(Path.of(roleMapFilePath))) {
             properties.load(inputStream);
         }
         roleRegexMap = fromProperties(properties)

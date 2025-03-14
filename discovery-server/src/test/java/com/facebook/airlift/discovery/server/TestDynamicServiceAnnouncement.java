@@ -18,9 +18,8 @@ package com.facebook.airlift.discovery.server;
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import jakarta.validation.constraints.NotNull;
 import org.testng.annotations.Test;
-
-import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,21 +39,21 @@ public class TestDynamicServiceAnnouncement
     public void testValidatesNullId()
     {
         DynamicServiceAnnouncement announcement = new DynamicServiceAnnouncement(null, "type", Collections.<String, String>emptyMap());
-        assertFailsValidation(announcement, "id", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "id", "must not be null", NotNull.class);
     }
 
     @Test
     public void testValidatesNullType()
     {
         DynamicServiceAnnouncement announcement = new DynamicServiceAnnouncement(Id.<Service>random(), null, Collections.<String, String>emptyMap());
-        assertFailsValidation(announcement, "type", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "type", "must not be null", NotNull.class);
     }
 
     @Test
     public void testValidatesNullProperties()
     {
         DynamicServiceAnnouncement announcement = new DynamicServiceAnnouncement(Id.<Service>random(), "type", null);
-        assertFailsValidation(announcement, "properties", "may not be null", NotNull.class);
+        assertFailsValidation(announcement, "properties", "must not be null", NotNull.class);
     }
 
     @Test

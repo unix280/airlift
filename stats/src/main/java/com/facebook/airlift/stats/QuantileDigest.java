@@ -1,5 +1,6 @@
 package com.facebook.airlift.stats;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Ticker;
@@ -17,8 +18,6 @@ import io.airlift.slice.Slice;
 import io.airlift.slice.SliceInput;
 import io.airlift.slice.SliceOutput;
 import org.openjdk.jol.info.ClassLayout;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 import java.util.ArrayList;
 import java.util.Arrays;

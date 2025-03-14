@@ -4,13 +4,12 @@ import com.facebook.airlift.http.client.HttpStatus;
 import com.facebook.airlift.http.client.Request;
 import com.facebook.airlift.http.client.StringResponseHandler.StringResponse;
 import com.facebook.airlift.http.client.testing.TestingHttpClient;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import java.net.URI;
 

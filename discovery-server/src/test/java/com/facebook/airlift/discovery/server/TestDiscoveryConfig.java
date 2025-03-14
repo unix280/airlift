@@ -18,9 +18,8 @@ package com.facebook.airlift.discovery.server;
 import com.facebook.airlift.configuration.testing.ConfigAssertions;
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableMap;
+import jakarta.validation.constraints.NotNull;
 import org.testng.annotations.Test;
-
-import javax.validation.constraints.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +56,6 @@ public class TestDiscoveryConfig
     {
         DiscoveryConfig config = new DiscoveryConfig().setMaxAge(null);
 
-        assertFailsValidation(config, "maxAge", "may not be null", NotNull.class);
+        assertFailsValidation(config, "maxAge", "must not be null", NotNull.class);
     }
 }

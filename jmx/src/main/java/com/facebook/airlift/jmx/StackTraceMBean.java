@@ -15,9 +15,8 @@
  */
 package com.facebook.airlift.jmx;
 
+import jakarta.inject.Inject;
 import org.weakref.jmx.Managed;
-
-import javax.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;

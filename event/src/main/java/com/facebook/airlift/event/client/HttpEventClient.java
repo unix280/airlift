@@ -29,10 +29,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.ListenableFuture;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Flatten;
 import org.weakref.jmx.Managed;
-
-import javax.inject.Inject;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -27,9 +27,8 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import jakarta.inject.Provider;
 import org.testng.annotations.Test;
-
-import javax.inject.Provider;
 
 import java.util.Map;
 import java.util.Set;

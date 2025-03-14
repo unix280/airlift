@@ -15,12 +15,12 @@ package com.facebook.airlift.stats;
 
 import com.facebook.airlift.log.Logger;
 import com.facebook.airlift.units.Duration;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.concurrent.GuardedBy;
 import javax.management.JMException;
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -119,7 +119,7 @@ public class JmxGcMonitor
     private synchronized void onNotification(Notification notification)
     {
         if ("com.sun.management.gc.notification".equals(notification.getType())) {
-            GarbageCollectionNotificationInfo info = new GarbageCollectionNotificationInfo((CompositeData) notification.getUserData());
+            com.facebook.airlift.stats.GarbageCollectionNotificationInfo info = new com.facebook.airlift.stats.GarbageCollectionNotificationInfo((CompositeData) notification.getUserData());
 
             if (info.isMajorGc()) {
                 majorGcCount.incrementAndGet();

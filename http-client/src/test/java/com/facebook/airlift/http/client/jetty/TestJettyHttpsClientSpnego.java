@@ -5,8 +5,8 @@ import com.facebook.airlift.http.client.Request;
 import com.facebook.airlift.http.client.spnego.KerberosConfig;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 
 import static com.facebook.airlift.http.client.HttpStatus.UNAUTHORIZED;
 import static com.facebook.airlift.http.client.Request.Builder.prepareGet;
@@ -30,7 +30,7 @@ public class TestJettyHttpsClientSpnego
     protected KerberosConfig createKerberosConfig()
     {
         return super.createKerberosConfig()
-                .setConfig(new File("/etc/krb5.conf"));
+                .setConfig(Path.of("/etc/krb5.conf").toFile());
     }
 
     // TLS connections seem to have some conditions that do not respect timeouts

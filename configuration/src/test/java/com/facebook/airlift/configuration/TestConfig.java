@@ -26,9 +26,8 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.spi.Message;
+import jakarta.inject.Qualifier;
 import org.testng.annotations.Test;
-
-import javax.inject.Qualifier;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

@@ -25,12 +25,11 @@ import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import jakarta.inject.Inject;
+import jakarta.servlet.Servlet;
+import jakarta.ws.rs.core.Application;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
-
-import javax.inject.Inject;
-import javax.servlet.Servlet;
-import javax.ws.rs.core.Application;
 
 import java.util.HashMap;
 import java.util.Map;

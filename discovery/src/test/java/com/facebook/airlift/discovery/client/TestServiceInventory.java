@@ -20,19 +20,17 @@ import com.facebook.airlift.json.JsonCodec;
 import com.facebook.airlift.node.NodeInfo;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.testng.annotations.Test;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -111,7 +109,7 @@ public class TestServiceInventory
             ServletHolder servletHolder = new ServletHolder(new ServiceInventoryServlet(serviceInventoryJson));
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
             context.addServlet(servletHolder, "/*");
-            HandlerCollection handlers = new HandlerCollection();
+            ContextHandlerCollection handlers = new ContextHandlerCollection();
             handlers.addHandler(context);
             server.setHandler(handlers);
 
@@ -141,7 +139,7 @@ public class TestServiceInventory
         }
     }
 
-    private class ServiceInventoryServlet
+    private static class ServiceInventoryServlet
             extends HttpServlet
     {
         private final byte[] serviceInventory;
@@ -153,7 +151,7 @@ public class TestServiceInventory
 
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException
+                throws IOException
         {
             response.setHeader("Content-Type", "application/json");
             response.setStatus(200);

@@ -5,7 +5,7 @@ import com.facebook.airlift.http.client.Request;
 import com.facebook.airlift.http.client.RequestStats;
 import com.facebook.airlift.http.client.ResponseHandler;
 import com.google.common.util.concurrent.AbstractFuture;
-import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.Response;
 
 import java.io.InputStream;
 import java.util.concurrent.CancellationException;
@@ -30,12 +30,12 @@ class JettyResponseFuture<T, E extends Exception>
     private final long requestStart = System.nanoTime();
     private final AtomicReference<JettyAsyncHttpState> state = new AtomicReference<>(JettyAsyncHttpState.WAITING_FOR_CONNECTION);
     private final Request request;
-    private final org.eclipse.jetty.client.api.Request jettyRequest;
+    private final org.eclipse.jetty.client.Request jettyRequest;
     private final ResponseHandler<T, E> responseHandler;
     private final RequestStats stats;
     private final boolean recordRequestComplete;
 
-    JettyResponseFuture(Request request, org.eclipse.jetty.client.api.Request jettyRequest, ResponseHandler<T, E> responseHandler, RequestStats stats, boolean recordRequestComplete)
+    JettyResponseFuture(Request request, org.eclipse.jetty.client.Request jettyRequest, ResponseHandler<T, E> responseHandler, RequestStats stats, boolean recordRequestComplete)
     {
         this.request = requireNonNull(request, "request is null");
         this.jettyRequest = requireNonNull(jettyRequest, "jettyRequest is null");

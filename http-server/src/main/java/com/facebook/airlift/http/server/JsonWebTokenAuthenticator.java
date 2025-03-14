@@ -25,13 +25,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.Key;
 import java.security.Principal;
 import java.util.concurrent.ConcurrentHashMap;
@@ -140,7 +141,7 @@ public class JsonWebTokenAuthenticator
         {
             requireNonNull(keyFile, "keyFile is null");
             checkArgument(!keyFile.contains(KEY_ID_VARIABLE));
-            this.key = loadKeyFile(new File(keyFile));
+            this.key = loadKeyFile(Path.of(keyFile).toFile());
         }
 
         @Override
@@ -185,7 +186,7 @@ public class JsonWebTokenAuthenticator
 
         private LoadedKey loadKey(String keyId)
         {
-            return loadKeyFile(new File(keyFile.replace(KEY_ID_VARIABLE, keyId)));
+            return loadKeyFile(Path.of((keyFile.replace(KEY_ID_VARIABLE, keyId))).toFile());
         }
     }
 

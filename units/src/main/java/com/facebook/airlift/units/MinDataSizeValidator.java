@@ -13,8 +13,9 @@
  */
 package com.facebook.airlift.units;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintDeclarationException;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class MinDataSizeValidator
         implements ConstraintValidator<MinDataSize, DataSize>
@@ -24,7 +25,11 @@ public class MinDataSizeValidator
     @Override
     public void initialize(MinDataSize dataSize)
     {
-        this.min = DataSize.valueOf(dataSize.value());
+        try {
+            this.min = DataSize.valueOf(dataSize.value());
+        } catch (IllegalArgumentException e) {
+            throw new ConstraintDeclarationException(e);
+        }
     }
 
     @Override

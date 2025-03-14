@@ -17,7 +17,6 @@ package com.facebook.airlift.http.client;
 
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 import com.google.common.primitives.Ints;
 
@@ -81,7 +80,7 @@ public class JsonResponseHandler<T>
         }
         byte[] bytes;
         try {
-            bytes = ByteStreams.toByteArray(response.getInputStream());
+            bytes = response.getInputStream().readAllBytes();
         }
         catch (IOException e) {
             throw new RuntimeException("Error reading response from server");

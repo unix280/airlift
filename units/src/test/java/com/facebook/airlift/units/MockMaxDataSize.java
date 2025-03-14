@@ -13,7 +13,7 @@
  */
 package com.facebook.airlift.units;
 
-import javax.validation.Payload;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.Annotation;
 

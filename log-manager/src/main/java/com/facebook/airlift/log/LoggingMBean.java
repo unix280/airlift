@@ -17,9 +17,8 @@ package com.facebook.airlift.log;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Maps;
+import jakarta.inject.Inject;
 import org.weakref.jmx.Managed;
-
-import javax.inject.Inject;
 
 import java.util.Locale;
 import java.util.Map;

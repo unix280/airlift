@@ -20,11 +20,10 @@ import com.facebook.airlift.jaxrs.thrift.ThriftMapper;
 import com.facebook.airlift.jaxrs.thrift.ThriftMapperParsingException;
 import com.facebook.drift.codec.ThriftCodecManager;
 import com.facebook.drift.codec.internal.compiler.CompilerThriftCodecFactory;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -19,8 +19,7 @@ import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.codec.ThriftCodecManager;
 import com.facebook.drift.codec.internal.ThriftCodecFactory;
 import com.facebook.drift.codec.metadata.ThriftStructMetadata;
-
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 import static java.lang.String.format;
 

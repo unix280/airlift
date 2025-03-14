@@ -13,8 +13,8 @@
  */
 package com.facebook.airlift.http.client.jetty;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
 
 import java.util.Optional;
 

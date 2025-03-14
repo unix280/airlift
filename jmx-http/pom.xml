@@ -12,6 +12,7 @@
 
     <properties>
         <air.main.basedir>${project.parent.basedir}</air.main.basedir>
+        <project.build.targetJdk>17</project.build.targetJdk>
     </properties>
 
     <dependencies>
@@ -43,8 +44,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
         <dependency>
@@ -63,8 +64,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
         </dependency>
 
         <dependency>
@@ -75,17 +76,20 @@
         <dependency>
             <groupId>com.facebook.airlift</groupId>
             <artifactId>http-client</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- used by tests but also needed transitively -->
         <dependency>
             <groupId>com.facebook.airlift</groupId>
             <artifactId>node</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>com.facebook.airlift</groupId>
             <artifactId>http-server</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- for testing -->

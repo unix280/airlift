@@ -17,55 +17,54 @@ package com.facebook.airlift.http.server;
 
 import com.facebook.airlift.event.client.EventClient;
 import com.facebook.airlift.http.server.HttpServerBinder.HttpResourceBinding;
-import com.facebook.airlift.http.utils.jetty.ConcurrentScheduler;
 import com.facebook.airlift.node.NodeInfo;
 import com.facebook.airlift.security.pem.PemReader;
 import com.facebook.airlift.tracetoken.TraceTokenManager;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.primitives.Ints;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import org.eclipse.jetty.ee10.servlet.ErrorHandler;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.io.ConnectionStatistics;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.management.MBeanServer;
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -82,7 +81,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 import static com.facebook.airlift.http.utils.jetty.ConcurrentScheduler.createConcurrentScheduler;
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.toIntExact;
@@ -91,6 +89,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.list;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class HttpServer
@@ -131,10 +130,11 @@ public class HttpServer
 
         QueuedThreadPool threadPool = new QueuedThreadPool(config.getMaxThreads());
         threadPool.setMinThreads(config.getMinThreads());
-        threadPool.setIdleTimeout(Ints.checkedCast(config.getThreadMaxIdleTime().toMillis()));
+        threadPool.setIdleTimeout(toIntExact(config.getThreadMaxIdleTime().toMillis()));
         threadPool.setName("http-worker");
         threadPool.setDetailedDump(true);
         server = new Server(threadPool);
+        server.setErrorHandler(new ErrorHandler());
         registerErrorHandler = config.isShowStackTrace();
 
         if (mbeanServer != null) {
@@ -160,13 +160,12 @@ public class HttpServer
         HttpServerChannelListener channelListener = null;
         if (config.isLogEnabled()) {
             this.requestLog = createDelimitedRequestLog(config, tokenManager, eventClient);
-            channelListener = new HttpServerChannelListener(this.requestLog);
         }
         else {
             this.requestLog = null;
         }
 
-        ConcurrentScheduler concurrentScheduler = createConcurrentScheduler(
+        Scheduler concurrentScheduler = createConcurrentScheduler(
                 "http-server-timeout",
                 config.getTimeoutConcurrency(),
                 config.getTimeoutThreads());
@@ -194,8 +193,8 @@ public class HttpServer
                     server,
                     null,
                     concurrentScheduler,
-                    firstNonNull(acceptors, -1),
-                    firstNonNull(selectors, -1),
+                    requireNonNullElse(acceptors, -1),
+                    requireNonNullElse(selectors, -1),
                     http1,
                     http2c);
             httpConnector.setName("http");
@@ -228,7 +227,7 @@ public class HttpServer
             SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(config);
             if (pemKeyStore.isPresent()) {
-                sslContextFactory.setKeyStore(pemKeyStore.get());
+                sslContextFactory.setKeyStore(pemKeyStore.orElseThrow());
                 sslContextFactory.setKeyStorePassword("");
             }
             else {
@@ -241,7 +240,7 @@ public class HttpServer
             if (config.getTrustStorePath() != null) {
                 Optional<KeyStore> pemTrustStore = tryLoadPemTrustStore(config);
                 if (pemTrustStore.isPresent()) {
-                    sslContextFactory.setTrustStore(pemTrustStore.get());
+                    sslContextFactory.setTrustStore(pemTrustStore.orElseThrow());
                     sslContextFactory.setTrustStorePassword("");
                 }
                 else {
@@ -266,8 +265,8 @@ public class HttpServer
                     server,
                     null,
                     concurrentScheduler,
-                    firstNonNull(acceptors, -1),
-                    firstNonNull(selectors, -1),
+                    requireNonNullElse(acceptors, -1),
+                    requireNonNullElse(selectors, -1),
                     sslConnectionFactory,
                     new HttpConnectionFactory(httpsConfiguration));
             httpsConnector.setName("https");
@@ -296,7 +295,7 @@ public class HttpServer
             QueuedThreadPool adminThreadPool = new QueuedThreadPool(config.getAdminMaxThreads());
             adminThreadPool.setName("http-admin-worker");
             adminThreadPool.setMinThreads(config.getAdminMinThreads());
-            adminThreadPool.setIdleTimeout(Ints.checkedCast(config.getThreadMaxIdleTime().toMillis()));
+            adminThreadPool.setIdleTimeout(toIntExact(config.getThreadMaxIdleTime().toMillis()));
 
             if (config.isHttpsEnabled()) {
                 adminConfiguration.addCustomizer(new SecureRequestCustomizer());
@@ -363,11 +362,9 @@ public class HttpServer
          *    |-- admin context handler
          *           \ --- the admin servlet
          */
-        HandlerCollection handlers = new HandlerCollection();
-
+        Handler.Sequence handlers = new Handler.Sequence();
         for (HttpResourceBinding resource : resources) {
-            GzipHandler gzipHandler = new GzipHandler();
-            gzipHandler.setHandler(new ClassPathResourceHandler(
+            GzipHandler gzipHandler = new GzipHandler(new ClassPathResourceHandler(
                     resource.getBaseUri(),
                     resource.getClassPathResourceBase(),
                     resource.getWelcomeFiles(),
@@ -378,20 +375,23 @@ public class HttpServer
         handlers.addHandler(createServletContext(config, defaultServlet, servlets, parameters, filters, tokenManager, loginService, authorizer, "http", "https"));
 
         if (config.isRequestStatsEnabled()) {
-            RequestLogHandler statsRecorder = new RequestLogHandler();
-            statsRecorder.setRequestLog(new StatsRecordingHandler(stats));
-            handlers.addHandler(statsRecorder);
+            server.setRequestLog(new StatsRecordingHandler(stats));
         }
 
         // add handlers to Jetty
-        StatisticsHandler statsHandler = new StatisticsHandler();
-        statsHandler.setHandler(handlers);
+        StatisticsHandler statsHandler = new StatisticsHandler(handlers);
 
-        HandlerList rootHandlers = new HandlerList();
+        ContextHandlerCollection rootHandlers = new ContextHandlerCollection();
         if (theAdminServlet != null && config.isAdminEnabled()) {
             rootHandlers.addHandler(createServletContext(config, theAdminServlet, ImmutableMap.of(), adminParameters, adminFilters, tokenManager, loginService, authorizer, "admin"));
         }
-        rootHandlers.addHandler(statsHandler);
+
+        if (requestLog != null) {
+            rootHandlers.addHandler(new HttpServerChannelListener(requestLog, statsHandler));
+        }
+        else {
+            rootHandlers.addHandler(statsHandler);
+        }
         server.setHandler(rootHandlers);
 
         certificateExpiration = loadAllX509Certificates(config).stream()
@@ -428,7 +428,7 @@ public class HttpServer
             context.addFilter(new FilterHolder(filter), "/*", null);
         }
         // -- gzip handler
-        context.setGzipHandler(new GzipHandler());
+        context.insertHandler(new GzipHandler());
 
         // -- the servlet
         ServletHolder servletHolder = new ServletHolder(defaultServlet);
@@ -457,10 +457,9 @@ public class HttpServer
 
         // Starting with Jetty 9 there is no way to specify connectors directly, but
         // there is this wonky @ConnectorName virtual hosts automatically added
-        String[] virtualHosts = new String[connectorNames.length];
-        for (int i = 0; i < connectorNames.length; i++) {
-            virtualHosts[i] = "@" + connectorNames[i];
-        }
+        List<String> virtualHosts = Arrays.stream(connectorNames)
+                .map(name -> "@" + name)
+                .toList();
         context.setVirtualHosts(virtualHosts);
 
         return context;
@@ -468,8 +467,7 @@ public class HttpServer
 
     private static SecurityHandler createSecurityHandler(LoginService loginService)
     {
-        Constraint constraint = new Constraint();
-        constraint.setAuthenticate(false);
+        Constraint constraint = Constraint.ALLOWED;
 
         ConstraintMapping constraintMapping = new ConstraintMapping();
         constraintMapping.setConstraint(constraint);
@@ -487,7 +485,7 @@ public class HttpServer
     private static DelimitedRequestLog createDelimitedRequestLog(HttpServerConfig config, TraceTokenManager tokenManager, EventClient eventClient)
             throws IOException
     {
-        File logFile = new File(config.getLogPath());
+        File logFile = Path.of(config.getLogPath()).toFile();
         if (logFile.exists() && !logFile.isFile()) {
             throw new IOException(format("Log path %s exists but is not a file", logFile.getAbsolutePath()));
         }
@@ -509,7 +507,7 @@ public class HttpServer
 
     private static Optional<KeyStore> tryLoadPemKeyStore(HttpServerConfig config)
     {
-        File keyStoreFile = new File(config.getKeystorePath());
+        File keyStoreFile = Path.of(config.getKeystorePath()).toFile();
         try {
             if (!PemReader.isPem(keyStoreFile)) {
                 return Optional.empty();
@@ -529,7 +527,7 @@ public class HttpServer
 
     private static Optional<KeyStore> tryLoadPemTrustStore(HttpServerConfig config)
     {
-        File trustStoreFile = new File(config.getTrustStorePath());
+        File trustStoreFile = Path.of(config.getTrustStorePath()).toFile();
         try {
             if (!PemReader.isPem(trustStoreFile)) {
                 return Optional.empty();
@@ -619,7 +617,7 @@ public class HttpServer
     {
         ImmutableSet.Builder<X509Certificate> certificates = ImmutableSet.builder();
         if (config.isHttpsEnabled()) {
-            try (InputStream keystoreInputStream = new FileInputStream(config.getKeystorePath())) {
+            try (InputStream keystoreInputStream = Files.newInputStream(Path.of(config.getKeystorePath()))) {
                 KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
                 keystore.load(keystoreInputStream, config.getKeystorePassword().toCharArray());
 

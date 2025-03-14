@@ -27,9 +27,8 @@ import com.facebook.airlift.units.MinDuration;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -84,6 +83,7 @@ public class HttpServerConfig
 
     /**
      * This property is initialized with Jetty's default excluded ciphers list.
+     *
      * @see org.eclipse.jetty.util.ssl.SslContextFactory#SslContextFactory(boolean, String)
      */
     private List<String> excludedCipherSuites = ImmutableList.of("^.*_(MD5|SHA|SHA1)$", "^TLS_RSA_.*$", "^SSL_.*$", "^.*_NULL_.*$", "^.*_anon_.*$");

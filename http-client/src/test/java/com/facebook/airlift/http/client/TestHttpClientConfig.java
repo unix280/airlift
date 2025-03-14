@@ -20,10 +20,9 @@ import com.facebook.airlift.units.DataSize;
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HostAndPort;
+import jakarta.validation.constraints.NotNull;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.testng.annotations.Test;
-
-import javax.validation.constraints.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -205,9 +204,9 @@ public class TestHttpClientConfig
     @Test
     public void testValidations()
     {
-        assertFailsValidation(new HttpClientConfig().setConnectTimeout(null), "connectTimeout", "may not be null", NotNull.class);
-        assertFailsValidation(new HttpClientConfig().setRequestTimeout(null), "requestTimeout", "may not be null", NotNull.class);
-        assertFailsValidation(new HttpClientConfig().setIdleTimeout(null), "idleTimeout", "may not be null", NotNull.class);
+        assertFailsValidation(new HttpClientConfig().setConnectTimeout(null), "connectTimeout", "must not be null", NotNull.class);
+        assertFailsValidation(new HttpClientConfig().setRequestTimeout(null), "requestTimeout", "must not be null", NotNull.class);
+        assertFailsValidation(new HttpClientConfig().setIdleTimeout(null), "idleTimeout", "must not be null", NotNull.class);
     }
 
     private List<String> getJettyDefaultExcludedCiphers()

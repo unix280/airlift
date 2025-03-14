@@ -21,9 +21,8 @@ import com.facebook.drift.codec.ThriftCodecManager;
 import com.facebook.drift.codec.internal.ForCompiler;
 import com.facebook.drift.codec.internal.ThriftCodecFactory;
 import com.facebook.drift.codec.metadata.ThriftStructMetadata;
+import com.google.errorprone.annotations.Immutable;
 import com.google.inject.Inject;
-
-import javax.annotation.concurrent.Immutable;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;

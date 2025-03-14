@@ -20,10 +20,9 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-
-import javax.annotation.PreDestroy;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 import java.net.URI;
 import java.util.concurrent.ScheduledExecutorService;

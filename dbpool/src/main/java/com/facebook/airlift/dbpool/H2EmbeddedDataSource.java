@@ -17,21 +17,22 @@ package com.facebook.airlift.dbpool;
 
 import com.facebook.airlift.dbpool.H2EmbeddedDataSourceConfig.Cipher;
 import com.google.common.io.Resources;
-import com.google.common.primitives.Ints;
+import jakarta.inject.Inject;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.util.ScriptReader;
 
-import javax.inject.Inject;
 import javax.sql.PooledConnection;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static java.lang.Math.toIntExact;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -73,7 +74,7 @@ public class H2EmbeddedDataSource
         else {
             dataSource.setPassword("");
         }
-        dataSource.setLoginTimeout(Ints.checkedCast(config.getMaxConnectionWait().roundTo(SECONDS)));
+        dataSource.setLoginTimeout(toIntExact(config.getMaxConnectionWait().roundTo(SECONDS)));
 
         // connect to database and initialize database
         Connection connection = getConnection();
@@ -88,7 +89,7 @@ public class H2EmbeddedDataSource
             String fileName = config.getInitScript();
             if (fileName != null) {
                 // find init script
-                File file = new File(fileName);
+                File file = Path.of(fileName).toFile();
                 URL url;
                 if (file.exists()) {
                     url = file.toURI().toURL();

@@ -8,6 +8,9 @@ import com.facebook.airlift.log.Logging;
 import com.facebook.airlift.testing.Closeables;
 import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -15,10 +18,8 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
@@ -140,10 +141,10 @@ public abstract class AbstractHttpClientTest
         if (keystore != null) {
             httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
-            SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
+            SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setKeyStorePath(keystore);
             sslContextFactory.setKeyStorePassword("changeit");
-            SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
+            SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
 
             connector = new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
         }
@@ -161,9 +162,9 @@ public abstract class AbstractHttpClientTest
 
         ServletHolder servletHolder = new ServletHolder(servlet);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-        context.setGzipHandler(new GzipHandler());
+        context.setHandler(new GzipHandler());
         context.addServlet(servletHolder, "/*");
-        HandlerCollection handlers = new HandlerCollection();
+        ContextHandlerCollection handlers = new ContextHandlerCollection();
         handlers.addHandler(context);
         server.setHandler(handlers);
 
@@ -699,7 +700,7 @@ public abstract class AbstractHttpClientTest
 
         response = executeRequest(request, createStatusResponseHandler());
         assertEquals(response.getStatusCode(), 302);
-        assertEquals(response.getHeader(LOCATION), baseURI.toASCIIString() + "/redirect");
+        assertEquals(response.getHeader(LOCATION), "/redirect");
         assertEquals(servlet.getRequestUri(), request.getUri());
     }
 

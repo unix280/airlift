@@ -16,8 +16,7 @@
 package com.facebook.airlift.http.server;
 
 import com.facebook.airlift.discovery.client.AnnouncementHttpServerInfo;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.net.URI;
 

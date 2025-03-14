@@ -18,10 +18,9 @@ package com.facebook.airlift.sample;
 import com.facebook.airlift.event.client.InMemoryEventClient;
 import com.facebook.airlift.jaxrs.testing.MockUriInfo;
 import com.google.common.collect.ImmutableList;
+import jakarta.ws.rs.core.Response;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.core.Response;
 
 import java.net.URI;
 

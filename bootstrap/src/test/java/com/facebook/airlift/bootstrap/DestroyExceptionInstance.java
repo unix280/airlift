@@ -1,7 +1,7 @@
 package com.facebook.airlift.bootstrap;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 public class DestroyExceptionInstance
 {

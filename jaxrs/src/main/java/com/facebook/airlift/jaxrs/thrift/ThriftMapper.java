@@ -21,13 +21,12 @@ import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.codec.ThriftCodecManager;
 import com.facebook.drift.protocol.TTransportException;
 import com.facebook.drift.transport.netty.codec.Protocol;
-
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.Provider;
 
 import java.io.EOFException;
 import java.io.IOException;

@@ -18,12 +18,10 @@ package com.facebook.airlift.http.client;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.ByteStreams;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -60,7 +58,7 @@ public final class EchoServlet
             requestHeaders.putAll(HeaderName.of(name), Collections.list(request.getHeaders(name)));
         }
 
-        requestBytes = ByteStreams.toByteArray(request.getInputStream());
+        requestBytes = request.getInputStream().readAllBytes();
 
         response.setStatus(responseStatusCode);
 

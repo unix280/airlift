@@ -5,12 +5,13 @@ import com.facebook.airlift.log.Logger;
 import com.facebook.airlift.units.Duration;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import com.sun.security.auth.module.Krb5LoginModule;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
-import org.eclipse.jetty.client.api.Authentication;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.Authentication;
+import org.eclipse.jetty.client.ContentResponse;
+import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.util.Attributes;
 import org.ietf.jgss.GSSContext;
@@ -19,7 +20,6 @@ import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.Oid;
 
-import javax.annotation.concurrent.GuardedBy;
 import javax.security.auth.Subject;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
@@ -155,7 +155,7 @@ public class SpnegoAuthentication
 
                     byte[] token = context.initSecContext(new byte[0], 0, 0);
                     if (token != null) {
-                        request.header(headerInfo.getHeader(), format("%s %s", NEGOTIATE, Base64.getEncoder().encodeToString(token)));
+                        request.headers(headers -> headers.add(headerInfo.getHeader(), format("%s %s", NEGOTIATE, Base64.getEncoder().encodeToString(token))));
                     }
                     else {
                         throw new RuntimeException(format("No token generated from GSS context for %s", request.getURI()));

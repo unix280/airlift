@@ -3,12 +3,11 @@ package com.facebook.airlift.http.client.jetty;
 import com.facebook.airlift.http.client.GatheringByteArrayInputStream;
 import com.facebook.airlift.http.client.ResponseTooLargeException;
 import com.facebook.airlift.units.DataSize;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import com.google.errorprone.annotations.ThreadSafe;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.http.HttpHeader;
-
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import static java.util.Objects.requireNonNull;
 
 @ThreadSafe
 class BufferingResponseListener
-        extends Response.Listener.Adapter
+        implements Response.Listener
 {
     private static final long BUFFER_MAX_BYTES = new DataSize(1, MEGABYTE).toBytes();
     private static final long BUFFER_MIN_BYTES = new DataSize(1, KILOBYTE).toBytes();

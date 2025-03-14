@@ -27,19 +27,18 @@ import com.facebook.drift.codec.ThriftCodecManager;
 import com.facebook.drift.codec.internal.compiler.CompilerThriftCodecFactory;
 import com.facebook.drift.transport.netty.codec.Protocol;
 import com.google.common.net.HttpHeaders;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
 import java.net.URI;
 
@@ -56,7 +55,7 @@ import static com.facebook.drift.transport.netty.codec.Protocol.BINARY;
 import static com.facebook.drift.transport.netty.codec.Protocol.COMPACT;
 import static com.facebook.drift.transport.netty.codec.Protocol.FB_COMPACT;
 import static com.google.common.net.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -77,10 +76,10 @@ public class TestJaxrsThriftTestingHttpProcessor
         httpClient =
                 new TestingHttpClient(
                         new JaxrsTestingHttpProcessor(
-                            URI.create("http://fake.invalid/"),
-                            new Resource(),
-                            new ThriftMapper(codecManager),
-                            new ParsingExceptionMapper()));
+                                URI.create("http://fake.invalid/"),
+                                new Resource(),
+                                new ThriftMapper(codecManager),
+                                new ParsingExceptionMapper()));
         testThriftMessageThriftCodec = codecManager.getCodec(TestThriftMessage.class);
         testThriftMessageTestThriftResponseHandler = new ThriftResponseHandler<>(testThriftMessageThriftCodec);
     }

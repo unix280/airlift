@@ -26,8 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.Set;
 import java.util.UUID;

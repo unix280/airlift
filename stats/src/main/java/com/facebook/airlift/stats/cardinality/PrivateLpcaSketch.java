@@ -13,13 +13,12 @@
  */
 package com.facebook.airlift.stats.cardinality;
 
+import com.facebook.airlift.concurrent.NotThreadSafe;
 import com.google.common.annotations.VisibleForTesting;
 import io.airlift.slice.BasicSliceInput;
 import io.airlift.slice.DynamicSliceOutput;
 import io.airlift.slice.SizeOf;
 import io.airlift.slice.Slice;
-
-import javax.annotation.concurrent.NotThreadSafe;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

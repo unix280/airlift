@@ -17,7 +17,7 @@ import com.facebook.airlift.configuration.testing.ConfigAssertions;
 import com.google.common.collect.ImmutableMap;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class TestSecurityConfig
@@ -43,9 +43,9 @@ public class TestSecurityConfig
                 .build();
 
         KerberosConfig expected = new KerberosConfig()
-                .setConfig(new File("/etc/krb5.conf"))
-                .setKeytab(new File("/etc/krb5.keytab"))
-                .setCredentialCache(new File("/etc/krb5.ccache"))
+                .setConfig(Path.of("/etc/krb5.conf").toFile())
+                .setKeytab(Path.of("/etc/krb5.keytab").toFile())
+                .setCredentialCache(Path.of("/etc/krb5.ccache").toFile())
                 .setUseCanonicalHostname(false);
 
         ConfigAssertions.assertFullMapping(properties, expected);

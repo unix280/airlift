@@ -39,7 +39,7 @@ class ServiceTypeImpl
 
     public String toString()
     {
-        return String.format("@%s(value=%s)", ServiceType.class.getName(), Annotations.memberValueString(value));
+        return String.format("@%s(%s)", ServiceType.class.getName(), Annotations.memberValueString(value));
     }
 
     @Override

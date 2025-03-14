@@ -16,9 +16,8 @@
 package com.facebook.airlift.bootstrap;
 
 import com.facebook.airlift.log.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

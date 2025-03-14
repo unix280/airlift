@@ -17,10 +17,9 @@ package com.facebook.airlift.discovery.store;
 
 import com.facebook.airlift.log.Logger;
 import com.google.common.base.Preconditions;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.weakref.jmx.Managed;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import java.util.ArrayList;
 import java.util.Collection;

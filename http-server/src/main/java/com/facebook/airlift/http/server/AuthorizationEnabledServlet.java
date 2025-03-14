@@ -16,15 +16,14 @@
 package com.facebook.airlift.http.server;
 
 import com.google.common.collect.ImmutableSet;
-
-import javax.annotation.security.RolesAllowed;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.facebook.airlift.http.server.HttpServerConfig.AuthorizationPolicy;
-import static com.google.common.io.ByteStreams.copy;
-import static com.google.common.io.ByteStreams.nullOutputStream;
+import static java.io.OutputStream.nullOutputStream;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
@@ -108,7 +106,7 @@ public class AuthorizationEnabledServlet
 
         AuthorizationResult result = authorizer.authorize(
                 principal,
-                allowedRoles.get(),
+                allowedRoles.orElseThrow(),
                 request.getRequestURL().toString());
         if (!result.isAllowed()) {
             abortWithMessage(request, response, format("Principal %s is not allowed to access the resource. Reason: %s",
@@ -136,7 +134,7 @@ public class AuthorizationEnabledServlet
         // in the client by reading and discarding the entire body of the
         // unauthenticated request before sending the response.
         try (InputStream inputStream = request.getInputStream()) {
-            copy(inputStream, nullOutputStream());
+            inputStream.transferTo(nullOutputStream());
         }
     }
 

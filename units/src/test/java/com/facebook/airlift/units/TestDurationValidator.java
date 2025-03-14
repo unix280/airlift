@@ -15,13 +15,12 @@
  */
 package com.facebook.airlift.units;
 
-import org.apache.bval.jsr.ApacheValidationProvider;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
+import org.hibernate.validator.HibernateValidator;
 import org.testng.annotations.Test;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 
 import java.util.Optional;
 import java.util.Set;
@@ -33,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class TestDurationValidator
 {
-    private static final Validator VALIDATOR = Validation.byProvider(ApacheValidationProvider.class).configure().buildValidatorFactory().getValidator();
+    private static final Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory().getValidator();
 
     @Test
     public void testMaxDurationValidator()
@@ -74,16 +73,14 @@ public class TestDurationValidator
     {
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenMinAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: duration is not a valid data duration string: broken");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MinAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant com.facebook.airlift.units.MinDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("HV000030: No validator could be found for constraint 'com.facebook.airlift.units.MinDuration' validating type 'java.util.Optional<com.facebook.airlift.units.Duration>'. Check configuration for 'constrainedByMin'");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMinAnnotation()))
                 .isInstanceOf(ValidationException.class)
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
                 .hasMessage("java.lang.IllegalArgumentException: duration is not a valid data duration string: broken");
     }
 
@@ -97,7 +94,7 @@ public class TestDurationValidator
 
         assertThatThrownBy(() -> VALIDATOR.validate(new MaxAnnotationOnOptional()))
                 .isInstanceOf(ValidationException.class)
-                .hasMessage("No compliant com.facebook.airlift.units.MaxDuration ConstraintValidator found for annotated element of type java.util.Optional<T>");
+                .hasMessage("HV000030: No validator could be found for constraint 'com.facebook.airlift.units.MaxDuration' validating type 'java.util.Optional<com.facebook.airlift.units.Duration>'. Check configuration for 'constrainedByMin'");
 
         assertThatThrownBy(() -> VALIDATOR.validate(new BrokenOptionalMaxAnnotation()))
                 .isInstanceOf(ValidationException.class)

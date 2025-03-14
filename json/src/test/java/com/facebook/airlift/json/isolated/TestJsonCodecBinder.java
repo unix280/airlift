@@ -21,9 +21,8 @@ import com.facebook.airlift.json.JsonModule;
 import com.facebook.airlift.json.Person;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import jakarta.inject.Inject;
 import org.testng.annotations.Test;
-
-import javax.inject.Inject;
 
 import java.util.List;
 import java.util.Map;

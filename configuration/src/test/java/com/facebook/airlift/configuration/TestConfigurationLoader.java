@@ -21,7 +21,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
@@ -29,6 +28,7 @@ import java.util.Map;
 import static com.facebook.airlift.configuration.ConfigurationLoader.loadProperties;
 import static com.google.common.io.MoreFiles.deleteRecursively;
 import static com.google.common.io.RecursiveDeleteOption.ALLOW_INSECURE;
+import static java.nio.file.Files.newOutputStream;
 import static org.testng.Assert.assertEquals;
 
 public class TestConfigurationLoader
@@ -68,7 +68,7 @@ public class TestConfigurationLoader
             throws IOException
     {
         final File file = File.createTempFile("config", ".properties", tempDir);
-        try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
+        try (PrintStream out = new PrintStream(newOutputStream(file.toPath()))) {
             out.print("test: foo");
 
             System.setProperty("config", file.getAbsolutePath());
@@ -87,7 +87,7 @@ public class TestConfigurationLoader
             throws IOException
     {
         final File file = File.createTempFile("config", ".properties", tempDir);
-        try (PrintStream out = new PrintStream(new FileOutputStream(file))) {
+        try (PrintStream out = new PrintStream(newOutputStream(file.toPath()))) {
             out.println("key1: original");
             out.println("key2: original");
 

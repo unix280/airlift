@@ -41,7 +41,6 @@ import static com.facebook.airlift.event.client.AnnotationUtils.findAnnotatedMet
 import static com.facebook.airlift.event.client.EventDataType.getEventDataType;
 import static com.facebook.airlift.event.client.EventFieldMetadata.ContainerType;
 import static com.facebook.airlift.event.client.TypeParameterUtils.getTypeParameters;
-import static com.google.common.collect.Iterables.getFirst;
 import static java.util.Objects.requireNonNull;
 
 public final class EventTypeMetadata<T>
@@ -144,7 +143,7 @@ public final class EventTypeMetadata<T>
             else {
                 eventDataType = Optional.ofNullable(getEventDataType(dataType));
                 if (!eventDataType.isPresent()) {
-                    Object typeSource = (containerType.isPresent()) ? containerType.get() : "return";
+                    Object typeSource = (containerType.isPresent()) ? containerType.orElseThrow() : "return";
                     addMethodError("%s type [%s] is not supported", method, typeSource, dataType);
                     continue;
                 }
@@ -156,7 +155,7 @@ public final class EventTypeMetadata<T>
             if (eventField.fieldMapping() != EventFieldMapping.DATA) {
                 // validate special fields
                 if (containerType.isPresent()) {
-                    addMethodError("non-DATA fieldMapping (%s) not allowed for %s", method, eventField.fieldMapping(), containerType.get());
+                    addMethodError("non-DATA fieldMapping (%s) not allowed for %s", method, eventField.fieldMapping(), containerType.orElseThrow());
                     continue;
                 }
                 if (nestedEvent) {
@@ -200,9 +199,9 @@ public final class EventTypeMetadata<T>
             }
         }
 
-        this.uuidField = getFirst(specialFields.get(EventFieldMapping.UUID), null);
-        this.timestampField = getFirst(specialFields.get(EventFieldMapping.TIMESTAMP), null);
-        this.hostField = getFirst(specialFields.get(EventFieldMapping.HOST), null);
+        this.uuidField = specialFields.get(EventFieldMapping.UUID).stream().findFirst().orElse(null);
+        this.timestampField = specialFields.get(EventFieldMapping.TIMESTAMP).stream().findFirst().orElse(null);
+        this.hostField = specialFields.get(EventFieldMapping.HOST).stream().findFirst().orElse(null);
         this.fields = ImmutableSortedMap.copyOf(fields);
 
         if (getErrors().isEmpty() && this.fields.isEmpty()) {

@@ -15,10 +15,10 @@
  */
 package com.facebook.airlift.http.server;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.eclipse.jetty.security.HashLoginService;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
+import org.eclipse.jetty.util.resource.PathResourceFactory;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -26,6 +26,7 @@ public class HashLoginServiceProvider
         implements Provider<HashLoginService>
 {
     private final HttpServerConfig config;
+    private final PathResourceFactory pathResourceFactory = new PathResourceFactory();
 
     @Inject
     public HashLoginServiceProvider(HttpServerConfig config)
@@ -38,7 +39,7 @@ public class HashLoginServiceProvider
     {
         String authConfig = config.getUserAuthFile();
         if (!isNullOrEmpty(authConfig)) {
-            return new HashLoginService(HttpServerModule.REALM_NAME, authConfig);
+            return new HashLoginService(HttpServerModule.REALM_NAME, pathResourceFactory.newResource(authConfig));
         }
         return null;
     }

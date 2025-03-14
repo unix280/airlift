@@ -19,8 +19,7 @@ import com.facebook.airlift.discovery.store.DistributedStore;
 import com.facebook.airlift.discovery.store.Entry;
 import com.facebook.airlift.json.JsonCodec;
 import com.google.common.collect.ImmutableSet;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.Set;
 

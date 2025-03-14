@@ -16,7 +16,6 @@
 package com.facebook.airlift.discovery.client;
 
 import com.facebook.airlift.discovery.client.testing.TestingDiscoveryModule;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -28,6 +27,7 @@ import java.util.Set;
 
 import static com.facebook.airlift.discovery.client.DiscoveryBinder.discoveryBinder;
 import static com.facebook.airlift.discovery.client.ServiceAnnouncement.serviceAnnouncement;
+import static com.google.common.collect.MoreCollectors.onlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -154,7 +154,7 @@ public class TestHttpAnnouncementBinder
     {
         assertNotNull(actualAnnouncements);
         assertEquals(actualAnnouncements.size(), 1);
-        ServiceAnnouncement announcement = Iterables.getOnlyElement(actualAnnouncements);
+        ServiceAnnouncement announcement = actualAnnouncements.stream().collect(onlyElement());
         assertEquals(announcement.getType(), expected.getType());
         assertEquals(announcement.getProperties(), expected.getProperties());
     }

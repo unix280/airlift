@@ -3,12 +3,10 @@ package com.facebook.airlift.jaxrs.testing;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.util.List;
 import java.util.Map;
@@ -63,7 +61,7 @@ public class GuavaMultivaluedMap<K, V>
     @Override
     public V getFirst(K key)
     {
-        return Iterables.getFirst(multimap.get(key), null);
+        return multimap.get(key).stream().findFirst().orElse(null);
     }
 
     @Override

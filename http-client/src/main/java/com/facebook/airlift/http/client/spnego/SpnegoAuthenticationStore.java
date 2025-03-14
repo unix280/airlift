@@ -3,8 +3,8 @@ package com.facebook.airlift.http.client.spnego;
 import com.facebook.airlift.units.Duration;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.eclipse.jetty.client.api.Authentication;
-import org.eclipse.jetty.client.api.AuthenticationStore;
+import org.eclipse.jetty.client.Authentication;
+import org.eclipse.jetty.client.AuthenticationStore;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;

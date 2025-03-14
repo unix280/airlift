@@ -1,10 +1,9 @@
 package com.facebook.airlift.http.utils.jetty;
 
 import com.facebook.airlift.concurrent.ConcurrentScheduledExecutor;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.thread.Scheduler;
-
-import javax.annotation.concurrent.GuardedBy;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +36,7 @@ public class ConcurrentScheduler
         this.threadBaseName = requireNonNull(threadBaseName, "threadBaseName is null");
     }
 
-    public static ConcurrentScheduler createConcurrentScheduler(
+    public static Scheduler createConcurrentScheduler(
             String threadBaseName,
             int concurrency,
             int totalThreads)

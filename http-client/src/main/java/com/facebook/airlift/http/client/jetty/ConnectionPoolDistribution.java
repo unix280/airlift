@@ -3,7 +3,7 @@ package com.facebook.airlift.http.client.jetty;
 import com.facebook.airlift.stats.Distribution;
 import org.eclipse.jetty.client.DuplexConnectionPool;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.PoolingHttpDestination;
+import org.eclipse.jetty.client.transport.HttpDestination;
 
 import java.util.Objects;
 
@@ -20,9 +20,9 @@ class ConnectionPoolDistribution
         super(() -> {
             Distribution distribution = new Distribution();
             httpClient.getDestinations().stream()
-                    .filter(PoolingHttpDestination.class::isInstance)
-                    .map(PoolingHttpDestination.class::cast)
-                    .map(PoolingHttpDestination::getConnectionPool)
+                    .filter(HttpDestination.class::isInstance)
+                    .map(HttpDestination.class::cast)
+                    .map(HttpDestination::getConnectionPool)
                     .filter(Objects::nonNull)
                     .map(DuplexConnectionPool.class::cast)
                     .forEach(pool -> processor.process(distribution, pool));

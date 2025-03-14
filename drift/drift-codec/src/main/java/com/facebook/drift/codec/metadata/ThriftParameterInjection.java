@@ -15,7 +15,7 @@
  */
 package com.facebook.drift.codec.metadata;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 import java.lang.reflect.Type;
 
