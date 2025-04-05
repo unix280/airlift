@@ -63,6 +63,7 @@
         <module>http-utils</module>
         <module>dbpool</module>
         <module>discovery</module>
+        <module>discovery-server</module>
         <module>event</module>
         <module>http-client</module>
         <module>http-server</module>
@@ -123,6 +124,12 @@
             <dependency>
                 <groupId>com.facebook.airlift</groupId>
                 <artifactId>discovery</artifactId>
+                <version>${dep.airlift.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.facebook.airlift</groupId>
+                <artifactId>discovery-server</artifactId>
                 <version>${dep.airlift.version}</version>
             </dependency>
 
