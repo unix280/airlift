@@ -51,7 +51,7 @@ public class Version
 
         return Occurs.SAME;
     }
-    
+
     public enum Occurs
     {
         BEFORE, SAME, CONCURRENT, AFTER

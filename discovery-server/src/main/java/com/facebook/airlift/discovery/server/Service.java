@@ -119,7 +119,6 @@ public class Service
         return id.hashCode();
     }
 
-
     public static Predicate<Service> matchesType(final String type)
     {
         return new Predicate<Service>()

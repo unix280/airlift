@@ -25,7 +25,6 @@ import java.util.Map;
 import static com.facebook.airlift.json.JsonCodec.jsonCodec;
 import static org.testng.Assert.assertEquals;
 
-
 public class TestId
 {
     @Test

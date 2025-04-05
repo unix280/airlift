@@ -86,7 +86,6 @@ public class HttpRemoteStore
     private final AtomicLong lastRemoteServerRefreshTimestamp = new AtomicLong();
     private final MBeanExporter mbeanExporter;
 
-
     @Inject
     public HttpRemoteStore(String name,
             NodeInfo node,
@@ -146,8 +145,10 @@ public class HttpRemoteStore
                 // schedule a task to shut down all processors and wait for it to complete. We rely on the executor
                 // having a *single* thread to guarantee the execution happens after any currently running task
                 // (in case the cancel call above didn't do its magic and the scheduled task is still running)
-                executor.submit(new Runnable() {
-                    public void run() {
+                executor.submit(new Runnable()
+                {
+                    public void run()
+                    {
                         updateProcessors(Collections.<ServiceDescriptor>emptyList());
                     }
                 }).get();
@@ -256,7 +257,8 @@ public class HttpRemoteStore
 
                     .setUri(uri)
                     .setHeader("Content-Type", "application/x-jackson-smile")
-                    .setBodyGenerator(new BodyGenerator() {
+                    .setBodyGenerator(new BodyGenerator()
+                    {
                         @Override
                         public void write(OutputStream out)
                                 throws Exception

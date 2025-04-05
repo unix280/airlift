@@ -36,13 +36,13 @@ public class TestService
     {
         equivalenceTester()
                 .addEquivalentGroup(new Service(Id.<Service>valueOf("beb73711-0725-47c3-9305-a69d8c344c1e"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
-                                                ImmutableMap.of("key", "valueA")),
-                                    new Service(Id.<Service>valueOf("beb73711-0725-47c3-9305-a69d8c344c1e"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
-                                                ImmutableMap.of("key", "valueA")))
+                                ImmutableMap.of("key", "valueA")),
+                        new Service(Id.<Service>valueOf("beb73711-0725-47c3-9305-a69d8c344c1e"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
+                                ImmutableMap.of("key", "valueA")))
                 .addEquivalentGroup(new Service(Id.<Service>valueOf("a0592d5d-b42b-4376-a651-be973ad97750"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
-                                                ImmutableMap.of("key", "valueA")),
-                                    new Service(Id.<Service>valueOf("a0592d5d-b42b-4376-a651-be973ad97750"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
-                                                ImmutableMap.of("key", "valueA")))
+                                ImmutableMap.of("key", "valueA")),
+                        new Service(Id.<Service>valueOf("a0592d5d-b42b-4376-a651-be973ad97750"), Id.<Node>valueOf("3c8285d0-bd0d-4fe2-8321-7ebcd065607b"), "blue", "poolA", "/locationA",
+                                ImmutableMap.of("key", "valueA")))
                 .check();
     }
 

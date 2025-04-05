@@ -27,13 +27,14 @@ import org.joda.time.DateTime;
 import static com.facebook.airlift.json.JsonCodec.listJsonCodec;
 
 public class TestReplicatedDynamicStore
-    extends TestDynamicStore
+        extends TestDynamicStore
 {
     @Override
     protected DynamicStore initializeStore(DiscoveryConfig config, Supplier<DateTime> timeSupplier)
     {
-        RemoteStore dummy = new RemoteStore() {
-            public void put(Entry entry) { }
+        RemoteStore dummy = new RemoteStore()
+        {
+            public void put(Entry entry) {}
         };
 
         DistributedStore distributedStore = new DistributedStore("dynamic", new InMemoryStore(new ConflictResolver()), dummy, new StoreConfig(), timeSupplier);

@@ -75,24 +75,24 @@ public class TestDynamicServiceAnnouncement
         equivalenceTester()
                 // vary fields, one by one
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueA")),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueA")))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueA")))
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueB")),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueB")))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", ImmutableMap.of("key", "valueB")))
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "red", ImmutableMap.of("key", "valueA")),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "red", ImmutableMap.of("key", "valueA")))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "red", ImmutableMap.of("key", "valueA")))
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("4960d071-67b0-4552-8b12-b7abd869aa83"), "blue", ImmutableMap.of("key", "valueA")),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("4960d071-67b0-4552-8b12-b7abd869aa83"), "blue", ImmutableMap.of("key", "valueA")))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("4960d071-67b0-4552-8b12-b7abd869aa83"), "blue", ImmutableMap.of("key", "valueA")))
                 // null fields
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", null),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", null))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", null))
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), null, ImmutableMap.of("key", "valueA")),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), null, ImmutableMap.of("key", "valueA")))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), null, ImmutableMap.of("key", "valueA")))
                 .addEquivalentGroup(new DynamicServiceAnnouncement(null, "blue", ImmutableMap.of("key", "valueA")),
-                                    new DynamicServiceAnnouncement(null, "blue", ImmutableMap.of("key", "valueA")))
+                        new DynamicServiceAnnouncement(null, "blue", ImmutableMap.of("key", "valueA")))
 
                 // empty properties
                 .addEquivalentGroup(new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", Collections.<String, String>emptyMap()),
-                                    new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", Collections.<String, String>emptyMap()))
+                        new DynamicServiceAnnouncement(Id.<Service>valueOf("ff824508-b6a6-4dfc-8f0b-85028465534d"), "blue", Collections.<String, String>emptyMap()))
                 .check();
     }
 
@@ -111,7 +111,7 @@ public class TestDynamicServiceAnnouncement
     @Test
     public void testImmutableProperties()
     {
-        DynamicServiceAnnouncement announcement = new DynamicServiceAnnouncement (Id.<Service>random(), "type", ImmutableMap.of("key", "value"));
+        DynamicServiceAnnouncement announcement = new DynamicServiceAnnouncement(Id.<Service>random(), "type", ImmutableMap.of("key", "value"));
 
         try {
             announcement.getProperties().put("key2", "value2");

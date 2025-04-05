@@ -50,8 +50,7 @@ public final class DiscoveryServer
                     new DiscoveryServerModule(),
                     new HttpEventModule(),
                     new TraceTokenModule(),
-                    new DiscoveryModule()
-            );
+                    new DiscoveryModule());
 
             Injector injector = app.initialize();
             injector.getInstance(Announcer.class).start();

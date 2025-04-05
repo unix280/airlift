@@ -67,8 +67,7 @@ public class TestDynamicAnnouncement
     public void testValidatesNestedServiceAnnouncements()
     {
         DynamicAnnouncement announcement = new DynamicAnnouncement("testing", "pool", "/location", ImmutableSet.of(
-                new DynamicServiceAnnouncement(null, "type", Collections.<String, String>emptyMap()))
-        );
+                new DynamicServiceAnnouncement(null, "type", Collections.<String, String>emptyMap())));
 
         assertFailsValidation(announcement, "serviceAnnouncements[].id", "may not be null", NotNull.class);
     }
@@ -92,8 +91,7 @@ public class TestDynamicAnnouncement
     public void testToString()
     {
         DynamicAnnouncement announcement = new DynamicAnnouncement("testing", "pool", "/location", ImmutableSet.of(
-                new DynamicServiceAnnouncement(Id.<Service>random(), "type", Collections.<String, String>emptyMap()))
-        );
+                new DynamicServiceAnnouncement(Id.<Service>random(), "type", Collections.<String, String>emptyMap())));
 
         assertNotNull(announcement.toString());
     }

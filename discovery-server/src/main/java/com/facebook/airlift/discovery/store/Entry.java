@@ -35,7 +35,7 @@ public class Entry
     @JsonCreator
     public Entry(@JsonProperty("key") byte[] key,
             @JsonProperty("value") byte[] value,
-            @JsonProperty("version") Version version, 
+            @JsonProperty("version") Version version,
             @JsonProperty("timestamp") long timestamp,
             @JsonProperty("maxAge") Long maxAgeInMs)
     {

@@ -159,13 +159,11 @@ public class TestDiscoveryServer
         assertEquals(service.getPool(), announcerNodeInfo.getPool());
         assertEquals(service.getProperties(), announcement.getProperties());
 
-
         // ensure that service is no longer visible
         client.unannounce().get();
 
         assertTrue(selectorFor("apple", "red").selectAllServices().isEmpty());
     }
-
 
     @Test
     public void testStaticAnnouncement()
@@ -216,15 +214,16 @@ public class TestDiscoveryServer
             throws Exception
     {
         Map<String, String> clientProperties = ImmutableMap.<String, String>builder()
-            .put("discovery.uri", server.getBaseUrl().toString())
-            .put("discovery.apple.pool", "red")
-            .build();
+                .put("discovery.uri", server.getBaseUrl().toString())
+                .put("discovery.apple.pool", "red")
+                .build();
 
         Bootstrap bootstrap = new Bootstrap(
                 new TestingNodeModule("testing"),
                 new JsonModule(),
                 new DiscoveryModule(),
-                new Module() {
+                new Module()
+                {
                     @Override
                     public void configure(Binder binder)
                     {

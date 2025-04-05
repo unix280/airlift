@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
 import java.util.Collections;
 
 import static com.facebook.airlift.discovery.server.DynamicServiceAnnouncement.toServiceWith;
-import static com.google.common.collect.ImmutableSet.of;
 import static org.testng.Assert.assertEquals;
 
 public class TestServiceResource
@@ -43,23 +42,23 @@ public class TestServiceResource
     public void testGetByType()
     {
         Id<Node> redNodeId = Id.random();
-        DynamicServiceAnnouncement redStorage = new DynamicServiceAnnouncement(Id.<Service>random() , "storage", ImmutableMap.of("key", "1"));
+        DynamicServiceAnnouncement redStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "1"));
         DynamicServiceAnnouncement redWeb = new DynamicServiceAnnouncement(Id.<Service>random(), "web", ImmutableMap.of("key", "2"));
-        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", of(redStorage, redWeb));
+        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", ImmutableSet.of(redStorage, redWeb));
 
         Id<Node> greenNodeId = Id.random();
         DynamicServiceAnnouncement greenStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "3"));
-        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", of(greenStorage));
+        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", ImmutableSet.of(greenStorage));
 
         Id<Node> blueNodeId = Id.random();
         DynamicServiceAnnouncement blueStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "4"));
-        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", of(blueStorage));
+        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", ImmutableSet.of(blueStorage));
 
         dynamicStore.put(redNodeId, red);
         dynamicStore.put(greenNodeId, green);
         dynamicStore.put(blueNodeId, blue);
 
-        assertEquals(resource.getServices("storage"), new Services("testing", of(
+        assertEquals(resource.getServices("storage"), new Services("testing", ImmutableSet.of(
                 toServiceWith(redNodeId, red.getLocation(), red.getPool()).apply(redStorage),
                 toServiceWith(greenNodeId, green.getLocation(), green.getPool()).apply(greenStorage),
                 toServiceWith(blueNodeId, blue.getLocation(), blue.getPool()).apply(blueStorage))));
@@ -76,15 +75,15 @@ public class TestServiceResource
         Id<Node> redNodeId = Id.random();
         DynamicServiceAnnouncement redStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "1"));
         DynamicServiceAnnouncement redWeb = new DynamicServiceAnnouncement(Id.<Service>random(), "web", ImmutableMap.of("key", "2"));
-        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", of(redStorage, redWeb));
+        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", ImmutableSet.of(redStorage, redWeb));
 
         Id<Node> greenNodeId = Id.random();
         DynamicServiceAnnouncement greenStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "3"));
-        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", of(greenStorage));
+        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", ImmutableSet.of(greenStorage));
 
         Id<Node> blueNodeId = Id.random();
         DynamicServiceAnnouncement blueStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "4"));
-        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", of(blueStorage));
+        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", ImmutableSet.of(blueStorage));
 
         dynamicStore.put(redNodeId, red);
         dynamicStore.put(greenNodeId, green);
@@ -105,15 +104,15 @@ public class TestServiceResource
         Id<Node> redNodeId = Id.random();
         DynamicServiceAnnouncement redStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "1"));
         DynamicServiceAnnouncement redWeb = new DynamicServiceAnnouncement(Id.<Service>random(), "web", ImmutableMap.of("key", "2"));
-        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", of(redStorage, redWeb));
+        DynamicAnnouncement red = new DynamicAnnouncement("testing", "alpha", "/a/b/c", ImmutableSet.of(redStorage, redWeb));
 
         Id<Node> greenNodeId = Id.random();
         DynamicServiceAnnouncement greenStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "3"));
-        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", of(greenStorage));
+        DynamicAnnouncement green = new DynamicAnnouncement("testing", "alpha", "/x/y/z", ImmutableSet.of(greenStorage));
 
         Id<Node> blueNodeId = Id.random();
         DynamicServiceAnnouncement blueStorage = new DynamicServiceAnnouncement(Id.<Service>random(), "storage", ImmutableMap.of("key", "4"));
-        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", of(blueStorage));
+        DynamicAnnouncement blue = new DynamicAnnouncement("testing", "beta", "/a/b/c", ImmutableSet.of(blueStorage));
 
         dynamicStore.put(redNodeId, red);
         dynamicStore.put(greenNodeId, green);

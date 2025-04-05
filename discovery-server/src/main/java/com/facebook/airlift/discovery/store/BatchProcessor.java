@@ -37,7 +37,7 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 public class BatchProcessor<T>
 {
-    private final static Logger log = Logger.get(BatchProcessor.class);
+    private static final Logger log = Logger.get(BatchProcessor.class);
 
     private final BatchHandler<T> handler;
     private final int maxBatchSize;
@@ -70,7 +70,8 @@ public class BatchProcessor<T>
         if (future == null) {
             executor = newSingleThreadExecutor(threadsNamed("batch-processor-" + name));
 
-            future = executor.submit(new Runnable() {
+            future = executor.submit(new Runnable()
+            {
                 public void run()
                 {
                     while (!Thread.interrupted()) {

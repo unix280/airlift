@@ -65,7 +65,7 @@ public class StoreResource
         Entry entry = new Entry(key.getBytes(Charsets.UTF_8), value, new Version(System.currentTimeMillis()), System.currentTimeMillis(), null); // TODO: version
         store.put(entry);
     }
-    
+
     @POST
     @Consumes({"application/x-jackson-smile", "application/json"})
     public Response setMultipleEntries(@PathParam("store") String storeName, List<Entry> entries)

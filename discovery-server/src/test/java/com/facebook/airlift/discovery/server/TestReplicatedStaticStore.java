@@ -27,13 +27,14 @@ import org.joda.time.DateTime;
 import static com.facebook.airlift.json.JsonCodec.jsonCodec;
 
 public class TestReplicatedStaticStore
-    extends TestStaticStore
+        extends TestStaticStore
 {
     @Override
     protected StaticStore initializeStore(Supplier<DateTime> timeSupplier)
     {
-        RemoteStore dummy = new RemoteStore() {
-            public void put(Entry entry) { }
+        RemoteStore dummy = new RemoteStore()
+        {
+            public void put(Entry entry) {}
         };
 
         DistributedStore distributedStore = new DistributedStore("static", new InMemoryStore(new ConflictResolver()), dummy, new StoreConfig(), timeSupplier);

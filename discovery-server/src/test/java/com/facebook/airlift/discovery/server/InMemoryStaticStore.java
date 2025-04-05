@@ -28,7 +28,7 @@ import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 
 public class InMemoryStaticStore
-    implements StaticStore
+        implements StaticStore
 {
     private final Map<Id<Service>, Service> services = Maps.newHashMap();
 
