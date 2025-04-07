@@ -15,13 +15,9 @@
  */
 package com.facebook.airlift.discovery.store;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import io.airlift.units.Duration;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,8 +29,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
 @Path("/v1/store/{store}")
 public class StoreResource
@@ -46,14 +45,9 @@ public class StoreResource
     public StoreResource(Map<String, LocalStore> localStores, Map<String, StoreConfig> configs)
     {
         this.localStores = ImmutableMap.copyOf(localStores);
-        this.tombstoneMaxAges = ImmutableMap.copyOf(Maps.transformValues(configs, new Function<StoreConfig, Duration>()
-        {
-            @Override
-            public Duration apply(@Nullable StoreConfig config)
-            {
-                return config.getTombstoneMaxAge();
-            }
-        }));
+        this.tombstoneMaxAges = configs.entrySet().stream().collect(toImmutableMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().getTombstoneMaxAge()));
     }
 
     @PUT
@@ -62,7 +56,7 @@ public class StoreResource
     {
         LocalStore store = localStores.get(storeName);
 
-        Entry entry = new Entry(key.getBytes(Charsets.UTF_8), value, new Version(System.currentTimeMillis()), System.currentTimeMillis(), null); // TODO: version
+        Entry entry = new Entry(key.getBytes(StandardCharsets.UTF_8), value, new Version(System.currentTimeMillis()), System.currentTimeMillis(), null); // TODO: version
         store.put(entry);
     }
 

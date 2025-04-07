@@ -17,13 +17,14 @@ package com.facebook.airlift.discovery.server;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.concurrent.Immutable;
 
 import java.util.Map;
+import java.util.function.Predicate;
+
+import static java.util.Objects.requireNonNull;
 
 @Immutable
 public class Service
@@ -44,18 +45,12 @@ public class Service
             @JsonProperty("location") String location,
             @JsonProperty("properties") Map<String, String> properties)
     {
-        Preconditions.checkNotNull(id, "id is null");
-        Preconditions.checkNotNull(type, "type is null");
-        Preconditions.checkNotNull(pool, "pool is null");
-        Preconditions.checkNotNull(location, "location is null");
-        Preconditions.checkNotNull(properties, "properties is null");
-
-        this.id = id;
+        this.id = requireNonNull(id, "id is null");
         this.nodeId = nodeId;
-        this.type = type;
-        this.pool = pool;
-        this.location = location;
-        this.properties = ImmutableMap.copyOf(properties);
+        this.type = requireNonNull(type, "type is null");
+        this.pool = requireNonNull(pool, "pool is null");
+        this.location = requireNonNull(location, "location is null");
+        this.properties = ImmutableMap.copyOf(requireNonNull(properties, "properties is null"));
     }
 
     @JsonProperty
@@ -121,24 +116,12 @@ public class Service
 
     public static Predicate<Service> matchesType(final String type)
     {
-        return new Predicate<Service>()
-        {
-            public boolean apply(Service descriptor)
-            {
-                return descriptor.getType().equals(type);
-            }
-        };
+        return descriptor -> descriptor.getType().equals(type);
     }
 
     public static Predicate<Service> matchesPool(final String pool)
     {
-        return new Predicate<Service>()
-        {
-            public boolean apply(Service descriptor)
-            {
-                return descriptor.getPool().equals(pool);
-            }
-        };
+        return descriptor -> descriptor.getPool().equals(pool);
     }
 
     @Override

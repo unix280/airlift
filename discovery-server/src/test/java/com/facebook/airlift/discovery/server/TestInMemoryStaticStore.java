@@ -15,14 +15,14 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import com.google.common.base.Supplier;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 public class TestInMemoryStaticStore
         extends TestStaticStore
 {
     @Override
-    protected StaticStore initializeStore(Supplier<DateTime> timeSupplier)
+    protected StaticStore initializeStore(Supplier<ZonedDateTime> timeSupplier)
     {
         return new InMemoryStaticStore();
     }

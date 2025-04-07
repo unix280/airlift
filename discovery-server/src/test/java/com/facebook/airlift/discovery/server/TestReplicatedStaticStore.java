@@ -17,12 +17,12 @@ package com.facebook.airlift.discovery.server;
 
 import com.facebook.airlift.discovery.store.ConflictResolver;
 import com.facebook.airlift.discovery.store.DistributedStore;
-import com.facebook.airlift.discovery.store.Entry;
 import com.facebook.airlift.discovery.store.InMemoryStore;
 import com.facebook.airlift.discovery.store.RemoteStore;
 import com.facebook.airlift.discovery.store.StoreConfig;
-import com.google.common.base.Supplier;
-import org.joda.time.DateTime;
+
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.json.JsonCodec.jsonCodec;
 
@@ -30,12 +30,9 @@ public class TestReplicatedStaticStore
         extends TestStaticStore
 {
     @Override
-    protected StaticStore initializeStore(Supplier<DateTime> timeSupplier)
+    protected StaticStore initializeStore(Supplier<ZonedDateTime> timeSupplier)
     {
-        RemoteStore dummy = new RemoteStore()
-        {
-            public void put(Entry entry) {}
-        };
+        RemoteStore dummy = entry -> {};
 
         DistributedStore distributedStore = new DistributedStore("static", new InMemoryStore(new ConflictResolver()), dummy, new StoreConfig(), timeSupplier);
 

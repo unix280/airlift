@@ -23,8 +23,8 @@ import javax.annotation.concurrent.Immutable;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 
 @Immutable
 public final class Id<T>
@@ -44,7 +44,7 @@ public final class Id<T>
 
     private Id(String id)
     {
-        checkNotNull(id, "id is null");
+        requireNonNull(id, "id is null");
         checkArgument(!id.isEmpty(), "id is empty");
         this.id = id;
     }

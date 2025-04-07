@@ -15,15 +15,15 @@
  */
 package com.facebook.airlift.discovery.store;
 
-import com.google.common.base.Supplier;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 public class RealTimeSupplier
-        implements Supplier<DateTime>
+        implements Supplier<ZonedDateTime>
 {
     @Override
-    public DateTime get()
+    public ZonedDateTime get()
     {
-        return new DateTime();
+        return ZonedDateTime.now();
     }
 }

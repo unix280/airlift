@@ -15,14 +15,17 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import com.google.common.base.Supplier;
 import io.airlift.units.Duration;
 import org.joda.time.DateTime;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
-class TestingTimeSupplier
-        implements Supplier<DateTime>
+public class TestingTimeSupplier
+        implements Supplier<ZonedDateTime>
 {
     private final AtomicLong currentTime = new AtomicLong(System.currentTimeMillis());
 
@@ -42,8 +45,8 @@ class TestingTimeSupplier
     }
 
     @Override
-    public DateTime get()
+    public ZonedDateTime get()
     {
-        return new DateTime(currentTime.get());
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(currentTime.get()), TimeZone.getDefault().toZoneId());
     }
 }

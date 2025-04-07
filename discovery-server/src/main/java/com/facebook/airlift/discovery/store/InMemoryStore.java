@@ -15,8 +15,6 @@
  */
 package com.facebook.airlift.discovery.store;
 
-import com.google.common.base.Preconditions;
-
 import javax.inject.Inject;
 
 import java.nio.ByteBuffer;
@@ -26,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static com.facebook.airlift.discovery.store.Version.Occurs.AFTER;
 import static com.facebook.airlift.discovery.store.Version.Occurs.SAME;
+import static java.util.Objects.requireNonNull;
 
 public class InMemoryStore
         implements LocalStore
@@ -62,7 +61,7 @@ public class InMemoryStore
     @Override
     public Entry get(byte[] key)
     {
-        Preconditions.checkNotNull(key, "key is null");
+        requireNonNull(key, "key is null");
 
         return map.get(ByteBuffer.wrap(key));
     }
@@ -70,7 +69,7 @@ public class InMemoryStore
     @Override
     public void delete(byte[] key, Version version)
     {
-        Preconditions.checkNotNull(key, "key is null");
+        requireNonNull(key, "key is null");
 
         ByteBuffer wrappedKey = ByteBuffer.wrap(key);
 

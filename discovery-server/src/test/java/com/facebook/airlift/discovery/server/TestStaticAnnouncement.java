@@ -16,16 +16,16 @@
 package com.facebook.airlift.discovery.server;
 
 import com.facebook.airlift.json.JsonCodec;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import org.testng.annotations.Test;
 
 import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.facebook.airlift.testing.Assertions.assertNotEquals;
@@ -69,7 +69,7 @@ public class TestStaticAnnouncement
     {
         JsonCodec<StaticAnnouncement> codec = JsonCodec.jsonCodec(StaticAnnouncement.class);
 
-        StaticAnnouncement parsed = codec.fromJson(Resources.toString(Resources.getResource("static-announcement.json"), Charsets.UTF_8));
+        StaticAnnouncement parsed = codec.fromJson(Resources.toString(Resources.getResource("static-announcement.json"), StandardCharsets.UTF_8));
         StaticAnnouncement expected = new StaticAnnouncement("testing", "blue", "poolA", "/a/b/c", ImmutableMap.of("key", "valueA"));
 
         assertEquals(parsed, expected);
@@ -113,7 +113,7 @@ public class TestStaticAnnouncement
     @Test
     public void testCreatesDefensiveCopyOfProperties()
     {
-        Map<String, String> properties = Maps.newHashMap();
+        Map<String, String> properties = new HashMap<>();
         properties.put("key", "value");
         StaticAnnouncement announcement = new StaticAnnouncement("testing", "type", "pool", "/a/b", properties);
 

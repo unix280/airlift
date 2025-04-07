@@ -29,7 +29,7 @@ import java.net.URI;
 
 import static com.facebook.airlift.discovery.server.DynamicServiceAnnouncement.toServiceWith;
 import static com.facebook.airlift.testing.Assertions.assertEqualsIgnoreOrder;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -58,7 +58,7 @@ public class TestDynamicAnnouncementResource
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.ACCEPTED.getStatusCode());
 
-        assertEqualsIgnoreOrder(store.getAll(), transform(announcement.getServiceAnnouncements(), toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())));
+        assertEqualsIgnoreOrder(store.getAll(), announcement.getServiceAnnouncements().stream().map(toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())).collect(toImmutableList()));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TestDynamicAnnouncementResource
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.ACCEPTED.getStatusCode());
 
-        assertEqualsIgnoreOrder(store.getAll(), transform(announcement.getServiceAnnouncements(), toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())));
+        assertEqualsIgnoreOrder(store.getAll(), announcement.getServiceAnnouncements().stream().map(toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())).collect(toImmutableList()));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class TestDynamicAnnouncementResource
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
 
-        assertEqualsIgnoreOrder(store.getAll(), transform(red.getServiceAnnouncements(), toServiceWith(redNodeId, red.getLocation(), red.getPool())));
+        assertEqualsIgnoreOrder(store.getAll(), red.getServiceAnnouncements().stream().map(toServiceWith(redNodeId, red.getLocation(), red.getPool())).collect(toImmutableList()));
     }
 
     @Test

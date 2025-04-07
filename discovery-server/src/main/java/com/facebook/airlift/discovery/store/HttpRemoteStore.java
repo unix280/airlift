@@ -24,10 +24,6 @@ import com.facebook.airlift.log.Logger;
 import com.facebook.airlift.node.NodeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.smile.SmileFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import io.airlift.units.Duration;
 import org.weakref.jmx.MBeanExporter;
 import org.weakref.jmx.Managed;
@@ -51,17 +47,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 
 import static com.facebook.airlift.concurrent.Threads.daemonThreadsNamed;
 import static com.facebook.airlift.http.client.StatusResponseHandler.createStatusResponseHandler;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.compose;
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.inject.name.Names.named;
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static org.weakref.jmx.ObjectNames.generatedNameOf;
 
@@ -94,12 +87,12 @@ public class HttpRemoteStore
             HttpClient httpClient,
             MBeanExporter mbeanExporter)
     {
-        Preconditions.checkNotNull(name, "name is null");
-        Preconditions.checkNotNull(node, "node is null");
-        Preconditions.checkNotNull(selector, "selector is null");
-        Preconditions.checkNotNull(httpClient, "httpClient is null");
-        Preconditions.checkNotNull(config, "config is null");
-        Preconditions.checkNotNull(mbeanExporter, "mBeanExporter is null");
+        requireNonNull(name, "name is null");
+        requireNonNull(node, "node is null");
+        requireNonNull(selector, "selector is null");
+        requireNonNull(httpClient, "httpClient is null");
+        requireNonNull(config, "config is null");
+        requireNonNull(mbeanExporter, "mBeanExporter is null");
 
         this.name = name;
         this.node = node;
@@ -168,7 +161,7 @@ public class HttpRemoteStore
 
     private void updateProcessors(List<ServiceDescriptor> descriptors)
     {
-        Set<String> nodeIds = ImmutableSet.copyOf(transform(descriptors, getNodeIdFunction()));
+        Set<String> nodeIds = descriptors.stream().map(getNodeIdFunction()).collect(toImmutableSet());
 
         // remove old ones
         Iterator<Map.Entry<String, BatchProcessor<Entry>>> iterator = processors.entrySet().iterator();
@@ -182,8 +175,11 @@ public class HttpRemoteStore
             }
         }
 
-        Predicate<ServiceDescriptor> predicate = compose(and(not(equalTo(node.getNodeId())), not(in(processors.keySet()))), getNodeIdFunction());
-        Iterable<ServiceDescriptor> newDescriptors = filter(descriptors, predicate);
+        Iterable<ServiceDescriptor> newDescriptors = descriptors.stream()
+                .filter(descriptor ->
+                        !descriptor.getNodeId().equals(node.getNodeId())
+                                && !processors.containsKey(descriptor.getNodeId()))
+                .collect(toImmutableList());
 
         for (ServiceDescriptor descriptor : newDescriptors) {
             BatchProcessor<Entry> processor = new BatchProcessor<Entry>(descriptor.getNodeId(),

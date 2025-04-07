@@ -15,14 +15,14 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import com.google.common.base.Supplier;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 public class TestInMemoryDynamicStore
         extends TestDynamicStore
 {
     @Override
-    public DynamicStore initializeStore(DiscoveryConfig config, Supplier<DateTime> timeSupplier)
+    public DynamicStore initializeStore(DiscoveryConfig config, Supplier<ZonedDateTime> timeSupplier)
     {
         return new InMemoryDynamicStore(config, timeSupplier);
     }

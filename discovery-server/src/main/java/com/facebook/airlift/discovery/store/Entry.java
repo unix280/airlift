@@ -23,6 +23,8 @@ import javax.annotation.concurrent.Immutable;
 
 import java.util.Arrays;
 
+import static java.util.Objects.requireNonNull;
+
 @Immutable
 public class Entry
 {
@@ -39,8 +41,8 @@ public class Entry
             @JsonProperty("timestamp") long timestamp,
             @JsonProperty("maxAge") Long maxAgeInMs)
     {
-        Preconditions.checkNotNull(key, "key is null");
-        Preconditions.checkNotNull(version, "version is null");
+        requireNonNull(key, "key is null");
+        requireNonNull(version, "version is null");
         Preconditions.checkArgument(maxAgeInMs == null || maxAgeInMs > 0, "maxAgeInMs must be greater than 0");
 
         this.value = value;

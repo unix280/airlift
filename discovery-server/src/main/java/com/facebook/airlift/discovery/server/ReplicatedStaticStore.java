@@ -26,9 +26,7 @@ import java.util.Set;
 
 import static com.facebook.airlift.discovery.server.Service.matchesPool;
 import static com.facebook.airlift.discovery.server.Service.matchesType;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.collect.Iterables.filter;
+import static java.util.Objects.requireNonNull;
 
 public class ReplicatedStaticStore
         implements StaticStore
@@ -39,8 +37,8 @@ public class ReplicatedStaticStore
     @Inject
     public ReplicatedStaticStore(@ForStaticStore DistributedStore store, JsonCodec<Service> codec)
     {
-        this.store = checkNotNull(store, "store is null");
-        this.codec = checkNotNull(codec, "codec is null");
+        this.store = requireNonNull(store, "store is null");
+        this.codec = requireNonNull(codec, "codec is null");
     }
 
     @Override
@@ -72,12 +70,14 @@ public class ReplicatedStaticStore
     @Override
     public Set<Service> get(String type)
     {
-        return ImmutableSet.copyOf(filter(getAll(), matchesType(type)));
+        return ImmutableSet.copyOf(getAll().stream().filter(matchesType(type)).iterator());
     }
 
     @Override
     public Set<Service> get(String type, String pool)
     {
-        return ImmutableSet.copyOf(filter(getAll(), and(matchesType(type), matchesPool(pool))));
+        return ImmutableSet.copyOf(getAll().stream()
+                .filter(service -> matchesType(type).test(service) && matchesPool(pool).test(service))
+                .iterator());
     }
 }

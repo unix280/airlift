@@ -21,8 +21,9 @@ import com.facebook.airlift.discovery.store.Entry;
 import com.facebook.airlift.discovery.store.InMemoryStore;
 import com.facebook.airlift.discovery.store.RemoteStore;
 import com.facebook.airlift.discovery.store.StoreConfig;
-import com.google.common.base.Supplier;
-import org.joda.time.DateTime;
+
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.json.JsonCodec.listJsonCodec;
 
@@ -30,7 +31,7 @@ public class TestReplicatedDynamicStore
         extends TestDynamicStore
 {
     @Override
-    protected DynamicStore initializeStore(DiscoveryConfig config, Supplier<DateTime> timeSupplier)
+    protected DynamicStore initializeStore(DiscoveryConfig config, Supplier<ZonedDateTime> timeSupplier)
     {
         RemoteStore dummy = new RemoteStore()
         {

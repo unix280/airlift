@@ -15,37 +15,36 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import io.airlift.units.Duration;
-import org.joda.time.DateTime;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.Inject;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.discovery.server.DynamicServiceAnnouncement.toServiceWith;
 import static com.facebook.airlift.discovery.server.Service.matchesPool;
 import static com.facebook.airlift.discovery.server.Service.matchesType;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
 
 @ThreadSafe
 public class InMemoryDynamicStore
         implements DynamicStore
 {
-    private final Map<Id<Node>, Entry> descriptors = Maps.newHashMap();
+    private final Map<Id<Node>, Entry> descriptors = new HashMap<>();
     private final Duration maxAge;
-    private final Supplier<DateTime> currentTime;
+    private final Supplier<ZonedDateTime> currentTime;
 
     @Inject
-    public InMemoryDynamicStore(DiscoveryConfig config, Supplier<DateTime> timeSource)
+    public InMemoryDynamicStore(DiscoveryConfig config, Supplier<ZonedDateTime> timeSource)
     {
         this.currentTime = timeSource;
         this.maxAge = config.getMaxAge();
@@ -54,19 +53,19 @@ public class InMemoryDynamicStore
     @Override
     public synchronized void put(Id<Node> nodeId, DynamicAnnouncement announcement)
     {
-        Preconditions.checkNotNull(nodeId, "nodeId is null");
-        Preconditions.checkNotNull(announcement, "announcement is null");
+        requireNonNull(nodeId, "nodeId is null");
+        requireNonNull(announcement, "announcement is null");
 
-        Set<Service> services = ImmutableSet.copyOf(transform(announcement.getServiceAnnouncements(), toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())));
+        Set<Service> services = ImmutableSet.copyOf(announcement.getServiceAnnouncements().stream().map(toServiceWith(nodeId, announcement.getLocation(), announcement.getPool())).collect(toImmutableList()));
 
-        DateTime expiration = currentTime.get().plusMillis((int) maxAge.toMillis());
+        Instant expiration = currentTime.get().toInstant().plusMillis((int) maxAge.toMillis());
         descriptors.put(nodeId, new Entry(expiration, services));
     }
 
     @Override
     public synchronized void delete(Id<Node> nodeId)
     {
-        Preconditions.checkNotNull(nodeId, "nodeId is null");
+        requireNonNull(nodeId, "nodeId is null");
 
         descriptors.remove(nodeId);
     }
@@ -86,29 +85,31 @@ public class InMemoryDynamicStore
     @Override
     public synchronized Set<Service> get(String type)
     {
-        Preconditions.checkNotNull(type, "type is null");
+        requireNonNull(type, "type is null");
 
-        return ImmutableSet.copyOf(filter(getAll(), matchesType(type)));
+        return ImmutableSet.copyOf(getAll().stream().filter(matchesType(type)).iterator());
     }
 
     @Override
     public synchronized Set<Service> get(String type, String pool)
     {
-        Preconditions.checkNotNull(type, "type is null");
-        Preconditions.checkNotNull(pool, "pool is null");
+        requireNonNull(type, "type is null");
+        requireNonNull(pool, "pool is null");
 
-        return ImmutableSet.copyOf(filter(getAll(), and(matchesType(type), matchesPool(pool))));
+        return ImmutableSet.copyOf(getAll().stream()
+                .filter(service -> matchesType(type).test(service) && matchesPool(pool).test(service))
+                .iterator());
     }
 
     private synchronized void removeExpired()
     {
         Iterator<Entry> iterator = descriptors.values().iterator();
 
-        DateTime now = currentTime.get();
+        ZonedDateTime now = currentTime.get();
         while (iterator.hasNext()) {
             Entry entry = iterator.next();
 
-            if (now.isAfter(entry.getExpiration())) {
+            if (now.toInstant().isAfter(entry.getExpiration())) {
                 iterator.remove();
             }
         }
@@ -117,15 +118,15 @@ public class InMemoryDynamicStore
     private static class Entry
     {
         private final Set<Service> services;
-        private final DateTime expiration;
+        private final Instant expiration;
 
-        public Entry(DateTime expiration, Set<Service> services)
+        public Entry(Instant expiration, Set<Service> services)
         {
             this.expiration = expiration;
             this.services = ImmutableSet.copyOf(services);
         }
 
-        public DateTime getExpiration()
+        public Instant getExpiration()
         {
             return expiration;
         }

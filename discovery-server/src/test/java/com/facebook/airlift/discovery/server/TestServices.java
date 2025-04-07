@@ -16,7 +16,6 @@
 package com.facebook.airlift.discovery.server;
 
 import com.facebook.airlift.json.JsonCodec;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -24,7 +23,9 @@ import com.google.common.io.Resources;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.facebook.airlift.json.JsonCodec.jsonCodec;
@@ -36,7 +37,7 @@ public class TestServices
     @Test
     public void testCreatesDefensiveCopyOfServices()
     {
-        Set<Service> set = Sets.newHashSet();
+        Set<Service> set = new HashSet<>();
         set.add(new Service(Id.<Service>random(), Id.<Node>random(), "blue", "pool", "/location", ImmutableMap.of("key", "value")));
 
         Services services = new Services("testing", set);
@@ -75,7 +76,7 @@ public class TestServices
 
         JsonCodec<Object> codec = jsonCodec(Object.class);
         Object parsed = codec.fromJson(json);
-        Object expected = codec.fromJson(Resources.toString(Resources.getResource("services.json"), Charsets.UTF_8));
+        Object expected = codec.fromJson(Resources.toString(Resources.getResource("services.json"), StandardCharsets.UTF_8));
 
         assertEquals(parsed, expected);
     }

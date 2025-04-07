@@ -18,8 +18,7 @@ package com.facebook.airlift.discovery.store;
 import com.facebook.airlift.log.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.smile.SmileFactory;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -29,9 +28,9 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
-import java.util.Map;
 
 import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 public class PersistentStore
         implements LocalStore
@@ -81,25 +80,23 @@ public class PersistentStore
     @Override
     public Iterable<Entry> getAll()
     {
-        return Iterables.filter(Iterables.transform(db, new Function<Map.Entry<byte[], byte[]>, Entry>()
-        {
-            @Override
-            public Entry apply(Map.Entry<byte[], byte[]> dbEntry)
-            {
-                try {
-                    return mapper.readValue(dbEntry.getValue(), Entry.class);
-                }
-                catch (IOException e) {
-                    byte[] key = dbEntry.getKey();
-                    log.error(e, "Corrupt entry " + Arrays.toString(key));
+        return Streams.stream(db)
+                .map(dbEntry -> {
+                    try {
+                        return mapper.readValue(dbEntry.getValue(), Entry.class);
+                    }
+                    catch (IOException e) {
+                        byte[] key = dbEntry.getKey();
+                        log.error(e, "Corrupt entry " + Arrays.toString(key));
 
-                    // delete the corrupt entry... if another node has a non-corrupt version it will be replicated
-                    db.delete(key);
+                        // delete the corrupt entry... if another node has a non-corrupt version it will be replicated
+                        db.delete(key);
 
-                    // null if filtered below
-                    return null;
-                }
-            }
-        }), notNull());
+                        // null if filtered below
+                        return null;
+                    }
+                })
+                .filter(notNull())
+                .collect(toImmutableList());
     }
 }

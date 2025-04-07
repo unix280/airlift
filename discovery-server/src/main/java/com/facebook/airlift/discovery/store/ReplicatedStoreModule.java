@@ -18,23 +18,23 @@ package com.facebook.airlift.discovery.store;
 import com.facebook.airlift.discovery.client.ServiceSelector;
 import com.facebook.airlift.http.client.HttpClient;
 import com.facebook.airlift.node.NodeInfo;
-import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import org.joda.time.DateTime;
 import org.weakref.jmx.MBeanExporter;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import java.lang.annotation.Annotation;
+import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.configuration.ConfigBinder.configBinder;
 import static com.facebook.airlift.http.client.HttpClientBinder.httpClientBinder;
@@ -70,7 +70,7 @@ public class ReplicatedStoreModule
 
         // global
         jaxrsBinder(binder).bind(StoreResource.class);
-        binder.bind(new TypeLiteral<Supplier<DateTime>>() {}).to(RealTimeSupplier.class).in(Scopes.SINGLETON);
+        binder.bind(new TypeLiteral<Supplier<ZonedDateTime>>() {}).to(RealTimeSupplier.class).in(Scopes.SINGLETON);
         binder.bind(ConflictResolver.class).in(Scopes.SINGLETON);
 
         // per store
@@ -104,7 +104,7 @@ public class ReplicatedStoreModule
 
     @ThreadSafe
     private static class ReplicatorProvider
-            implements Provider<Replicator>
+            implements javax.inject.Provider<Replicator>
     {
         private final String name;
         private final Key<? extends LocalStore> localStoreKey;
@@ -259,7 +259,7 @@ public class ReplicatedStoreModule
         private final Key<? extends RemoteStore> remoteStoreKey;
 
         private Injector injector;
-        private Supplier<DateTime> timeSupplier;
+        private Supplier<ZonedDateTime> timeSupplier;
         private DistributedStore store;
 
         public DistributedStoreProvider(String name,
@@ -303,7 +303,7 @@ public class ReplicatedStoreModule
         }
 
         @Inject
-        public synchronized void setTimeSupplier(Supplier<DateTime> timeSupplier)
+        public synchronized void setTimeSupplier(Supplier<ZonedDateTime> timeSupplier)
         {
             this.timeSupplier = timeSupplier;
         }

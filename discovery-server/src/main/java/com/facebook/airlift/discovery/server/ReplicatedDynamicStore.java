@@ -18,8 +18,6 @@ package com.facebook.airlift.discovery.server;
 import com.facebook.airlift.discovery.store.DistributedStore;
 import com.facebook.airlift.discovery.store.Entry;
 import com.facebook.airlift.json.JsonCodec;
-import com.google.common.base.Supplier;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import io.airlift.units.Duration;
 
@@ -27,14 +25,14 @@ import javax.inject.Inject;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.discovery.server.DynamicServiceAnnouncement.toServiceWith;
 import static com.facebook.airlift.discovery.server.Service.matchesPool;
 import static com.facebook.airlift.discovery.server.Service.matchesType;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
-import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ReplicatedDynamicStore
@@ -48,9 +46,9 @@ public class ReplicatedDynamicStore
     @Inject
     public ReplicatedDynamicStore(@ForDynamicStore DistributedStore store, DiscoveryConfig config, JsonCodec<List<Service>> codec)
     {
-        this.store = checkNotNull(store, "store is null");
-        this.maxAge = checkNotNull(config, "config is null").getMaxAge();
-        this.codec = checkNotNull(codec, "codec is null");
+        this.store = requireNonNull(store, "store is null");
+        this.maxAge = requireNonNull(config, "config is null").getMaxAge();
+        this.codec = requireNonNull(codec, "codec is null");
 
         servicesSupplier = cachingSupplier(servicesSupplier(), config.getStoreCacheTtl());
     }
@@ -58,9 +56,9 @@ public class ReplicatedDynamicStore
     @Override
     public void put(Id<Node> nodeId, DynamicAnnouncement announcement)
     {
-        List<Service> services = FluentIterable.from(announcement.getServiceAnnouncements())
-                .transform(toServiceWith(nodeId, announcement.getLocation(), announcement.getPool()))
-                .toList();
+        List<Service> services = announcement.getServiceAnnouncements().stream()
+                .map(toServiceWith(nodeId, announcement.getLocation(), announcement.getPool()))
+                .collect(toImmutableList());
 
         byte[] key = nodeId.getBytes();
         byte[] value = codec.toJsonBytes(services);
@@ -83,13 +81,15 @@ public class ReplicatedDynamicStore
     @Override
     public Set<Service> get(String type)
     {
-        return ImmutableSet.copyOf(filter(getAll(), matchesType(type)));
+        return ImmutableSet.copyOf(getAll().stream().filter(matchesType(type)).iterator());
     }
 
     @Override
     public Set<Service> get(String type, String pool)
     {
-        return ImmutableSet.copyOf(filter(getAll(), and(matchesType(type), matchesPool(pool))));
+        return ImmutableSet.copyOf(getAll().stream()
+                .filter(service -> matchesType(type).test(service) && matchesPool(pool).test(service))
+                .iterator());
     }
 
     private Supplier<Set<Service>> servicesSupplier()
@@ -113,6 +113,6 @@ public class ReplicatedDynamicStore
         if (ttl.toMillis() == 0) {
             return supplier;
         }
-        return memoizeWithExpiration(supplier, ttl.toMillis(), MILLISECONDS);
+        return memoizeWithExpiration((com.google.common.base.Supplier) supplier, ttl.toMillis(), MILLISECONDS);
     }
 }

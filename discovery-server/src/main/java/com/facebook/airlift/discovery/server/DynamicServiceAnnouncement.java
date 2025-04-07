@@ -17,12 +17,12 @@ package com.facebook.airlift.discovery.server;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
 import javax.validation.constraints.NotNull;
 
 import java.util.Map;
+import java.util.function.Function;
 
 public class DynamicServiceAnnouncement
 {
@@ -111,13 +111,6 @@ public class DynamicServiceAnnouncement
 
     public static Function<DynamicServiceAnnouncement, Service> toServiceWith(final Id<Node> nodeId, final String location, final String pool)
     {
-        return new Function<DynamicServiceAnnouncement, Service>()
-        {
-            @Override
-            public Service apply(DynamicServiceAnnouncement announcement)
-            {
-                return new Service(announcement.getId(), nodeId, announcement.getType(), pool, location, announcement.getProperties());
-            }
-        };
+        return announcement -> new Service(announcement.getId(), nodeId, announcement.getType(), pool, location, announcement.getProperties());
     }
 }

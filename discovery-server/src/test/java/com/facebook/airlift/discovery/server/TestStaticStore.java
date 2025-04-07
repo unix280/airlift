@@ -15,14 +15,14 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.ZonedDateTime;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.testing.Assertions.assertEqualsIgnoreOrder;
 import static org.testng.Assert.assertEquals;
@@ -38,7 +38,7 @@ public abstract class TestStaticStore
     protected StaticStore store;
     protected TestingTimeSupplier currentTime;
 
-    protected abstract StaticStore initializeStore(Supplier<DateTime> timeSupplier);
+    protected abstract StaticStore initializeStore(Supplier<ZonedDateTime> timeSupplier);
 
     @BeforeMethod
     public void setup()

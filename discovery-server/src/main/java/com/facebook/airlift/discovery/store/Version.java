@@ -17,7 +17,6 @@ package com.facebook.airlift.discovery.store;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.primitives.Longs;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -40,7 +39,7 @@ public class Version
 
     public Occurs compare(Version other)
     {
-        int comparison = Longs.compare(sequence, other.sequence);
+        int comparison = Long.compare(sequence, other.sequence);
 
         if (comparison < 0) {
             return Occurs.BEFORE;

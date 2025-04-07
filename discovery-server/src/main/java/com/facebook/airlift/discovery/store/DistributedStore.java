@@ -15,26 +15,25 @@
  */
 package com.facebook.airlift.discovery.store;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import io.airlift.units.Duration;
-import org.joda.time.DateTime;
 import org.weakref.jmx.Managed;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static com.facebook.airlift.concurrent.Threads.daemonThreadsNamed;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 
 /**
@@ -45,7 +44,7 @@ public class DistributedStore
     private final String name;
     private final LocalStore localStore;
     private final RemoteStore remoteStore;
-    private final Supplier<DateTime> timeSupplier;
+    private final Supplier<ZonedDateTime> timeSupplier;
     private final Duration tombstoneMaxAge;
     private final Duration garbageCollectionInterval;
 
@@ -58,14 +57,14 @@ public class DistributedStore
             LocalStore localStore,
             RemoteStore remoteStore,
             StoreConfig config,
-            Supplier<DateTime> timeSupplier)
+            Supplier<ZonedDateTime> timeSupplier)
     {
-        this.name = checkNotNull(name, "name is null");
-        this.localStore = checkNotNull(localStore, "localStore is null");
-        this.remoteStore = checkNotNull(remoteStore, "remoteStore is null");
-        this.timeSupplier = checkNotNull(timeSupplier, "timeSupplier is null");
+        this.name = requireNonNull(name, "name is null");
+        this.localStore = requireNonNull(localStore, "localStore is null");
+        this.remoteStore = requireNonNull(remoteStore, "remoteStore is null");
+        this.timeSupplier = requireNonNull(timeSupplier, "timeSupplier is null");
 
-        checkNotNull(config, "config is null");
+        requireNonNull(config, "config is null");
         tombstoneMaxAge = config.getTombstoneMaxAge();
         garbageCollectionInterval = config.getGarbageCollectionInterval();
 
@@ -111,7 +110,7 @@ public class DistributedStore
 
     private boolean isExpired(Entry entry)
     {
-        long ageInMs = timeSupplier.get().getMillis() - entry.getTimestamp();
+        long ageInMs = timeSupplier.get().toInstant().toEpochMilli() - entry.getTimestamp();
 
         return entry.getValue() == null && ageInMs > tombstoneMaxAge.toMillis() ||  // TODO: this is repeated in StoreResource
                 entry.getMaxAgeInMs() != null && ageInMs > entry.getMaxAgeInMs();
@@ -125,10 +124,10 @@ public class DistributedStore
 
     public void put(byte[] key, byte[] value)
     {
-        checkNotNull(key, "key is null");
-        checkNotNull(value, "value is null");
+        requireNonNull(key, "key is null");
+        requireNonNull(value, "value is null");
 
-        long now = timeSupplier.get().getMillis();
+        long now = timeSupplier.get().toInstant().toEpochMilli();
 
         Entry entry = new Entry(key, value, new Version(now), now, null);
 
@@ -138,11 +137,11 @@ public class DistributedStore
 
     public void put(byte[] key, byte[] value, Duration maxAge)
     {
-        checkNotNull(key, "key is null");
-        checkNotNull(value, "value is null");
-        checkNotNull(maxAge, "maxAge is null");
+        requireNonNull(key, "key is null");
+        requireNonNull(value, "value is null");
+        requireNonNull(maxAge, "maxAge is null");
 
-        long now = timeSupplier.get().getMillis();
+        long now = timeSupplier.get().toInstant().toEpochMilli();
 
         Entry entry = new Entry(key, value, new Version(now), now, maxAge.toMillis());
 
@@ -152,7 +151,7 @@ public class DistributedStore
 
     public byte[] get(byte[] key)
     {
-        checkNotNull(key, "key is null");
+        requireNonNull(key, "key is null");
 
         Entry entry = localStore.get(key);
 
@@ -166,9 +165,9 @@ public class DistributedStore
 
     public void delete(byte[] key)
     {
-        checkNotNull(key, "key is null");
+        requireNonNull(key, "key is null");
 
-        long now = timeSupplier.get().getMillis();
+        long now = timeSupplier.get().toInstant().toEpochMilli();
 
         Entry entry = new Entry(key, null, new Version(now), now, null);
 
@@ -178,28 +177,17 @@ public class DistributedStore
 
     public Iterable<Entry> getAll()
     {
-        return Iterables.filter(localStore.getAll(), and(not(expired()), not(tombstone())));
+        return Streams.stream(localStore.getAll()).filter(entry -> !expired().test(entry) && !tombstone().test(entry))
+                .collect(toImmutableList());
     }
 
     private Predicate<? super Entry> expired()
     {
-        return new Predicate<Entry>()
-        {
-            public boolean apply(Entry entry)
-            {
-                return isExpired(entry);
-            }
-        };
+        return this::isExpired;
     }
 
     private static Predicate<? super Entry> tombstone()
     {
-        return new Predicate<Entry>()
-        {
-            public boolean apply(Entry entry)
-            {
-                return entry.getValue() == null;
-            }
-        };
+        return entry -> entry.getValue() == null;
     }
 }
