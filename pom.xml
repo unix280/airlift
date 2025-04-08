@@ -29,7 +29,7 @@
         <dep.packaging.version>${dep.airlift.version}</dep.packaging.version>
         <dep.jetty.version>9.4.55.v20240627</dep.jetty.version>
         <dep.jersey.version>2.26</dep.jersey.version>
-        <dep.drift.version>1.31</dep.drift.version>
+        <dep.drift.version>1.40-SNAPSHOT</dep.drift.version>
     </properties>
 
     <organization>
@@ -67,6 +67,7 @@
         <module>event</module>
         <module>http-client</module>
         <module>http-server</module>
+        <module>drift</module>
         <module>jaxrs</module>
         <module>jaxrs-testing</module>
         <module>jmx-http-rpc</module>

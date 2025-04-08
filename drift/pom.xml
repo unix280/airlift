@@ -4,8 +4,8 @@
 
     <parent>
         <groupId>com.facebook.airlift</groupId>
-        <artifactId>airbase</artifactId>
-        <version>95</version>
+        <artifactId>airlift</artifactId>
+        <version>0.217-SNAPSHOT</version>
     </parent>
 
     <groupId>com.facebook.drift</groupId>
@@ -15,7 +15,6 @@
 
     <name>drift-root</name>
     <description>Annotation based Thrift implementation</description>
-    <url>https://github.com/prestodb/drift</url>
 
     <scm>
         <connection>scm:git:git://github.com/airlift/drift.git</connection>
@@ -51,8 +50,6 @@
         <!-- This actually wants to be fixed -->
         <air.check.skip-pmd>true</air.check.skip-pmd>
         <air.check.skip-jacoco>true</air.check.skip-jacoco>
-
-        <dep.airlift.version>0.186</dep.airlift.version>
         <dep.takari-plugin.version>2.9.1</dep.takari-plugin.version>
         <dep.maven.version>3.5.3</dep.maven.version>
 
@@ -144,12 +141,6 @@
             <dependency>
                 <groupId>com.facebook.airlift</groupId>
                 <artifactId>log</artifactId>
-                <version>${dep.airlift.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.airlift</groupId>
-                <artifactId>units</artifactId>
                 <version>${dep.airlift.version}</version>
             </dependency>
 
