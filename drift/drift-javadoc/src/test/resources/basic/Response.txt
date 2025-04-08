@@ -1,0 +1,17 @@
+package its;
+
+import com.facebook.drift.annotations.ThriftDocumentation;
+import com.facebook.drift.annotations.ThriftOrder;
+
+@ThriftDocumentation
+class Response$DriftMeta {
+  @ThriftDocumentation("Get response type")
+  @ThriftOrder(10000)
+  void getType() {
+  }
+
+  @ThriftDocumentation("Set response type")
+  @ThriftOrder(10001)
+  void setType() {
+  }
+}
