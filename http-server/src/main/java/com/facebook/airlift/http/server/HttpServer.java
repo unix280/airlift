@@ -146,6 +146,7 @@ public class HttpServer
         HttpConfiguration baseHttpConfiguration = new HttpConfiguration();
         baseHttpConfiguration.setSendServerVersion(false);
         baseHttpConfiguration.setSendXPoweredBy(false);
+        baseHttpConfiguration.setUriCompliance(config.getUriComplianceMode().getUriCompliance());
         if (config.getMaxRequestHeaderSize() != null) {
             baseHttpConfiguration.setRequestHeaderSize(toIntExact(config.getMaxRequestHeaderSize().toBytes()));
         }

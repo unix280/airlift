@@ -33,6 +33,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
+import static com.facebook.airlift.http.server.UriCompliance.DEFAULT;
 import static com.facebook.airlift.units.DataSize.Unit.KILOBYTE;
 import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
@@ -80,6 +81,7 @@ public class HttpServerConfig
     private String trustStorePassword;
     private String secureRandomAlgorithm;
     private List<String> includedCipherSuites = ImmutableList.of();
+    private UriCompliance uriCompliance = DEFAULT;
 
     /**
      * This property is initialized with Jetty's default excluded ciphers list.
@@ -777,5 +779,18 @@ public class HttpServerConfig
     {
         this.allowUnsecureRequestsInAuthorizer = allowUnsecureRequestsInAuthorizer;
         return this;
+    }
+
+    @Config("http-server.uri-compliance.mode")
+    @ConfigDescription("The URI compliance mode")
+    public HttpServerConfig setUriComplianceMode(UriCompliance uriCompliance)
+    {
+        this.uriCompliance = uriCompliance;
+        return this;
+    }
+
+    public UriCompliance getUriComplianceMode()
+    {
+        return uriCompliance;
     }
 }
