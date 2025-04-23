@@ -8,7 +8,7 @@
         <version>0.217-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.facebook.drift</groupId>
+    <groupId>com.facebook.airlift.drift</groupId>
     <artifactId>drift-root</artifactId>
     <version>1.40-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -61,55 +61,55 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-codec</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-idl-generator</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-transport-apache</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-transport-netty</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.facebook.drift</groupId>
+                <groupId>com.facebook.airlift.drift</groupId>
                 <artifactId>drift-transport-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
