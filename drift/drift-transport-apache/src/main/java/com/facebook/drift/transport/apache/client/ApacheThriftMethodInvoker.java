@@ -15,6 +15,7 @@
  */
 package com.facebook.drift.transport.apache.client;
 
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TApplicationException;
 import com.facebook.drift.TException;
 import com.facebook.drift.codec.ThriftCodec;
@@ -35,7 +36,6 @@ import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
-import io.airlift.units.Duration;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;

@@ -15,12 +15,12 @@
  */
 package com.facebook.drift.client;
 
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.protocol.TTransportException;
 import com.facebook.drift.transport.client.ConnectionFailedException;
 import com.facebook.drift.transport.client.DriftClientConfig;
 import com.facebook.drift.transport.client.MessageTooLargeException;
 import com.facebook.drift.transport.client.RequestTimeoutException;
-import io.airlift.units.Duration;
 
 import java.io.InterruptedIOException;
 import java.util.Optional;

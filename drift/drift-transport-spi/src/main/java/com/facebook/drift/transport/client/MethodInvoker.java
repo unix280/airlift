@@ -15,8 +15,8 @@
  */
 package com.facebook.drift.transport.client;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 
 public interface MethodInvoker
 {

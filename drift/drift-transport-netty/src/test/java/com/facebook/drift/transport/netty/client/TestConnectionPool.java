@@ -15,10 +15,10 @@
  */
 package com.facebook.drift.transport.netty.client;
 
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.transport.netty.client.ConnectionManager.ConnectionParameters;
 import com.google.common.net.HostAndPort;
-import io.airlift.units.DataSize;
-import io.airlift.units.Duration;
 import io.netty.channel.Channel;
 import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -32,9 +32,9 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static com.facebook.airlift.concurrent.Threads.daemonThreadsNamed;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static com.facebook.drift.transport.netty.codec.Protocol.FB_COMPACT;
 import static com.facebook.drift.transport.netty.codec.Transport.HEADER;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.testng.Assert.assertFalse;

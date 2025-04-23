@@ -17,6 +17,7 @@ package com.facebook.drift.client;
 
 import com.facebook.airlift.concurrent.BoundedExecutor;
 import com.facebook.airlift.log.Logger;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TException;
 import com.facebook.drift.client.address.AddressSelector;
 import com.facebook.drift.client.stats.MethodInvocationStat;
@@ -34,7 +35,6 @@ import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
@@ -45,11 +45,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.facebook.airlift.units.Duration.succinctNanos;
 import static com.facebook.drift.client.ExceptionClassification.HostStatus.DOWN;
 import static com.facebook.drift.client.ExceptionClassification.HostStatus.NORMAL;
 import static com.facebook.drift.client.ExceptionClassification.HostStatus.OVERLOADED;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
-import static io.airlift.units.Duration.succinctNanos;
 import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;

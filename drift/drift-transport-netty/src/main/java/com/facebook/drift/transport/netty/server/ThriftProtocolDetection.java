@@ -15,10 +15,10 @@
  */
 package com.facebook.drift.transport.netty.server;
 
+import com.facebook.airlift.units.DataSize;
 import com.facebook.drift.transport.netty.codec.Protocol;
 import com.facebook.drift.transport.netty.codec.Transport;
 import com.google.common.primitives.Ints;
-import io.airlift.units.DataSize;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;

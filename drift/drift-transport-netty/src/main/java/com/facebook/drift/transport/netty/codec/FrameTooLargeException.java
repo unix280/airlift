@@ -19,8 +19,8 @@ import io.netty.handler.codec.DecoderException;
 
 import java.util.Optional;
 
+import static com.facebook.airlift.units.DataSize.succinctBytes;
 import static com.google.common.base.Preconditions.checkArgument;
-import static io.airlift.units.DataSize.succinctBytes;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 

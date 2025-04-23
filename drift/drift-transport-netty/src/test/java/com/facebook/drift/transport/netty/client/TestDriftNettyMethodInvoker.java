@@ -15,6 +15,9 @@
  */
 package com.facebook.drift.transport.netty.client;
 
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.DataSize.Unit;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TApplicationException;
 import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.codec.ThriftCodecManager;
@@ -47,9 +50,6 @@ import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import io.airlift.units.DataSize;
-import io.airlift.units.DataSize.Unit;
-import io.airlift.units.Duration;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.Future;

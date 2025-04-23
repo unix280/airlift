@@ -15,6 +15,7 @@
  */
 package com.facebook.drift.transport.netty.client;
 
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TApplicationException;
 import com.facebook.drift.TException;
 import com.facebook.drift.codec.ThriftCodec;
@@ -39,7 +40,6 @@ import com.facebook.drift.transport.netty.ssl.TChannelBufferInputTransport;
 import com.facebook.drift.transport.netty.ssl.TChannelBufferOutputTransport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractFuture;
-import io.airlift.units.Duration;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelDuplexHandler;

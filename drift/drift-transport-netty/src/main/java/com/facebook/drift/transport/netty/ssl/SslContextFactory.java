@@ -15,13 +15,13 @@
  */
 package com.facebook.drift.transport.netty.ssl;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ExecutionError;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import io.airlift.units.Duration;
 
 import java.io.File;
 import java.util.List;

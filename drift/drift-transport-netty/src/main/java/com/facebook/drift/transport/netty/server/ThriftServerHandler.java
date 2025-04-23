@@ -16,6 +16,7 @@
 package com.facebook.drift.transport.netty.server;
 
 import com.facebook.airlift.log.Logger;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TApplicationException;
 import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.codec.internal.ProtocolReader;
@@ -44,7 +45,6 @@ import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 

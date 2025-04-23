@@ -15,7 +15,7 @@
  */
 package com.facebook.drift.transport.netty.codec;
 
-import io.airlift.units.DataSize;
+import com.facebook.airlift.units.DataSize;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LengthFieldPrepender;
 

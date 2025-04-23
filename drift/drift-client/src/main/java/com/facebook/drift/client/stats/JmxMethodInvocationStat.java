@@ -21,9 +21,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.weakref.jmx.Managed;
 import org.weakref.jmx.Nested;
 
+import static com.facebook.airlift.units.Duration.nanosSince;
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
-import static io.airlift.units.Duration.nanosSince;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 

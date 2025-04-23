@@ -17,19 +17,19 @@ package com.facebook.drift.transport.apache.client;
 
 import com.facebook.airlift.configuration.Config;
 import com.facebook.airlift.configuration.ConfigSecuritySensitive;
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.Duration;
+import com.facebook.airlift.units.MaxDataSize;
+import com.facebook.airlift.units.MinDuration;
 import com.google.common.net.HostAndPort;
-import io.airlift.units.DataSize;
-import io.airlift.units.Duration;
-import io.airlift.units.MaxDataSize;
-import io.airlift.units.MinDuration;
 
 import javax.validation.constraints.NotNull;
 
 import java.io.File;
 
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Protocol.BINARY;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Transport.FRAMED;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 

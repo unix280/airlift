@@ -15,10 +15,10 @@
  */
 package com.facebook.drift.transport.netty.ssl;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCode;
 import com.google.common.io.Files;
-import io.airlift.units.Duration;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ApplicationProtocolConfig.Protocol;
 import io.netty.handler.ssl.ApplicationProtocolConfig.SelectedListenerFailureBehavior;

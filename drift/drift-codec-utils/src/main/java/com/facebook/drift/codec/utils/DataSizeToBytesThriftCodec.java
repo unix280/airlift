@@ -15,6 +15,7 @@
  */
 package com.facebook.drift.codec.utils;
 
+import com.facebook.airlift.units.DataSize;
 import com.facebook.drift.codec.ThriftCodec;
 import com.facebook.drift.codec.internal.coercion.FromThrift;
 import com.facebook.drift.codec.internal.coercion.ToThrift;
@@ -22,11 +23,10 @@ import com.facebook.drift.codec.metadata.ThriftCatalog;
 import com.facebook.drift.codec.metadata.ThriftType;
 import com.facebook.drift.protocol.TProtocolReader;
 import com.facebook.drift.protocol.TProtocolWriter;
-import io.airlift.units.DataSize;
 
 import javax.inject.Inject;
 
-import static io.airlift.units.DataSize.Unit.BYTE;
+import static com.facebook.airlift.units.DataSize.Unit.BYTE;
 import static java.util.Objects.requireNonNull;
 
 public class DataSizeToBytesThriftCodec

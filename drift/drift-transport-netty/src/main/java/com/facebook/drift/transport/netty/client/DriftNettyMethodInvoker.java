@@ -17,6 +17,7 @@ package com.facebook.drift.transport.netty.client;
 
 import com.facebook.airlift.concurrent.MoreFutures;
 import com.facebook.airlift.log.Logger;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.transport.client.InvokeRequest;
 import com.facebook.drift.transport.client.MethodInvoker;
 import com.facebook.drift.transport.client.RequestTimeoutException;
@@ -24,7 +25,6 @@ import com.facebook.drift.transport.netty.client.ConnectionManager.ConnectionPar
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
-import io.airlift.units.Duration;
 
 import java.util.concurrent.ScheduledExecutorService;
 

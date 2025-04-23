@@ -15,9 +15,9 @@
  */
 package com.facebook.drift.client;
 
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.transport.client.Address;
 import com.google.common.collect.ImmutableSet;
-import io.airlift.units.Duration;
 
 import java.util.Set;
 

@@ -17,6 +17,7 @@ package com.facebook.drift.client;
 
 import com.facebook.airlift.concurrent.BoundedExecutor;
 import com.facebook.airlift.testing.TestingTicker;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.TException;
 import com.facebook.drift.client.ExceptionClassification.HostStatus;
 import com.facebook.drift.client.address.AddressSelector;
@@ -36,7 +37,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-import io.airlift.units.Duration;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

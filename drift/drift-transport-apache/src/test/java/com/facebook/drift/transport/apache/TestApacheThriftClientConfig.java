@@ -15,11 +15,11 @@
  */
 package com.facebook.drift.transport.apache;
 
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.transport.apache.client.ApacheThriftClientConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HostAndPort;
-import io.airlift.units.DataSize;
-import io.airlift.units.Duration;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -28,11 +28,11 @@ import java.util.Map;
 import static com.facebook.airlift.configuration.testing.ConfigAssertions.assertFullMapping;
 import static com.facebook.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
 import static com.facebook.airlift.configuration.testing.ConfigAssertions.recordDefaults;
+import static com.facebook.airlift.units.DataSize.Unit.MEGABYTE;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Protocol.BINARY;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Protocol.COMPACT;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Transport.FRAMED;
 import static com.facebook.drift.transport.apache.client.ApacheThriftClientConfig.Transport.HEADER;
-import static io.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 

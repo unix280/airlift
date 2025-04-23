@@ -15,12 +15,12 @@
  */
 package com.facebook.drift.transport.netty.client;
 
+import com.facebook.airlift.units.DataSize;
+import com.facebook.airlift.units.Duration;
 import com.facebook.drift.transport.netty.codec.Protocol;
 import com.facebook.drift.transport.netty.codec.Transport;
 import com.facebook.drift.transport.netty.ssl.SslContextFactory.SslContextParameters;
 import com.google.common.net.HostAndPort;
-import io.airlift.units.DataSize;
-import io.airlift.units.Duration;
 import io.netty.channel.Channel;
 import io.netty.util.concurrent.Future;
 
