@@ -10,7 +10,7 @@
 
     <groupId>com.facebook.airlift.drift</groupId>
     <artifactId>drift-root</artifactId>
-    <version>1.40-SNAPSHOT</version>
+    <version>0.217-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>drift-root</name>
