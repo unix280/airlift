@@ -15,8 +15,8 @@
  */
 package com.facebook.airlift.discovery.store;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.Streams;
-import io.airlift.units.Duration;
 import org.weakref.jmx.Managed;
 
 import javax.annotation.PostConstruct;

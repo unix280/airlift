@@ -15,8 +15,8 @@
  */
 package com.facebook.airlift.discovery.store;
 
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableMap;
-import io.airlift.units.Duration;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;

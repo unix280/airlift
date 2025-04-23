@@ -18,8 +18,8 @@ package com.facebook.airlift.discovery.server;
 import com.facebook.airlift.discovery.store.DistributedStore;
 import com.facebook.airlift.discovery.store.Entry;
 import com.facebook.airlift.json.JsonCodec;
+import com.facebook.airlift.units.Duration;
 import com.google.common.collect.ImmutableSet;
-import io.airlift.units.Duration;
 
 import javax.inject.Inject;
 

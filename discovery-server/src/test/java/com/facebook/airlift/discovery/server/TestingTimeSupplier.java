@@ -15,7 +15,7 @@
  */
 package com.facebook.airlift.discovery.server;
 
-import io.airlift.units.Duration;
+import com.facebook.airlift.units.Duration;
 import org.joda.time.DateTime;
 
 import java.time.Instant;
