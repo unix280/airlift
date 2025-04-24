@@ -25,6 +25,7 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.concurrent.EventExecutorGroup;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -102,7 +103,8 @@ public class DriftNettyClientModule
             factory = new DriftNettyMethodInvokerFactory<>(
                     injector.getInstance(DriftNettyConnectionFactoryConfig.class),
                     annotation -> injector.getInstance(Key.get(DriftNettyClientConfig.class, annotation)),
-                    injector.getInstance(ByteBufAllocator.class));
+                    injector.getInstance(ByteBufAllocator.class),
+                    EventExecutorGroup::shutdownGracefully);
 
             return factory;
         }

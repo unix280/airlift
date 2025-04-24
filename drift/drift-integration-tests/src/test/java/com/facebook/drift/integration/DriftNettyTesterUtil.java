@@ -46,6 +46,7 @@ import static com.facebook.drift.integration.ClientTestUtils.logDriftClientBinde
 import static com.facebook.drift.transport.netty.client.DriftNettyMethodInvokerFactory.createStaticDriftNettyMethodInvokerFactory;
 import static com.facebook.drift.transport.netty.codec.Protocol.COMPACT;
 import static com.facebook.drift.transport.netty.codec.Transport.HEADER;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.testng.Assert.assertEquals;
 
 final class DriftNettyTesterUtil
@@ -85,7 +86,8 @@ final class DriftNettyTesterUtil
                 DriftNettyMethodInvokerFactory<String> methodInvokerFactory = new DriftNettyMethodInvokerFactory<>(
                         new DriftNettyConnectionFactoryConfig(),
                         clientIdentity -> config,
-                        testingAllocator)) {
+                        testingAllocator,
+                        x -> x.shutdownGracefully(0, 1, SECONDS))) {
             DriftClientFactoryManager<String> clientFactoryManager = new DriftClientFactoryManager<>(CODEC_MANAGER, methodInvokerFactory);
             DriftClientFactory proxyFactory = clientFactoryManager.createDriftClientFactory("clientIdentity", addressSelector, NORMAL_RESULT);
 
@@ -157,7 +159,8 @@ final class DriftNettyTesterUtil
                 DriftNettyMethodInvokerFactory<String> methodInvokerFactory = new DriftNettyMethodInvokerFactory<>(
                         new DriftNettyConnectionFactoryConfig(),
                         clientIdentity -> config,
-                        testingAllocator)) {
+                        testingAllocator,
+                        x -> x.shutdownGracefully(0, 1, SECONDS))) {
             DriftClientFactoryManager<String> proxyFactoryManager = new DriftClientFactoryManager<>(CODEC_MANAGER, methodInvokerFactory);
             DriftClientFactory proxyFactory = proxyFactoryManager.createDriftClientFactory("myFactory", addressSelector, NORMAL_RESULT);
 

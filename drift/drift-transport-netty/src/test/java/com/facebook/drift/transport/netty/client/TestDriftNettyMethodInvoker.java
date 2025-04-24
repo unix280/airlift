@@ -91,6 +91,7 @@ import static com.google.common.collect.MoreCollectors.onlyElement;
 import static java.util.Collections.nCopies;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -298,7 +299,8 @@ public class TestDriftNettyMethodInvoker
                 DriftNettyMethodInvokerFactory<Void> methodInvokerFactory = new DriftNettyMethodInvokerFactory<>(
                         new DriftNettyConnectionFactoryConfig(),
                         clientIdentity -> config,
-                        testingAllocator)) {
+                        testingAllocator,
+                        x -> x.shutdownGracefully(0, 1, SECONDS))) {
             MethodInvoker methodInvoker = methodInvokerFactory.createMethodInvoker(null);
 
             ListenableFuture<Object> future = methodInvoker.invoke(new InvokeRequest(LOG_METHOD_METADATA, () -> address, ImmutableMap.of(), ImmutableList.of(entries)));
@@ -377,7 +379,8 @@ public class TestDriftNettyMethodInvoker
                 DriftNettyMethodInvokerFactory<Void> methodInvokerFactory = new DriftNettyMethodInvokerFactory<>(
                         new DriftNettyConnectionFactoryConfig(),
                         clientIdentity -> config,
-                        testingAllocator)) {
+                        testingAllocator,
+                        x -> x.shutdownGracefully(0, 1, SECONDS))) {
             MethodInvoker methodInvoker = methodInvokerFactory.createMethodInvoker(null);
 
             ThriftType optionalType = optional(list(CODEC_MANAGER.getCatalog().getThriftType(DriftLogEntry.class)));

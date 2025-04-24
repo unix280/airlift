@@ -28,6 +28,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
+import io.netty.util.concurrent.Future;
 import jakarta.annotation.PreDestroy;
 
 import java.io.Closeable;
@@ -45,6 +47,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DriftNettyMethodInvokerFactory<I>
         implements MethodInvokerFactory<I>, Closeable
@@ -58,30 +61,31 @@ public class DriftNettyMethodInvokerFactory<I>
     private final ScheduledExecutorService connectionPoolMaintenanceExecutor;
     private final DriftNettyConnectionFactoryConfig factoryConfig;
     private final Map<Optional<I>, ConnectionPool> connectionPools = new ConcurrentHashMap<>();
-
-    public static DriftNettyMethodInvokerFactory<?> createStaticDriftNettyMethodInvokerFactory(DriftNettyClientConfig clientConfig)
-    {
-        return createStaticDriftNettyMethodInvokerFactory(clientConfig, ByteBufAllocator.DEFAULT);
-    }
+    private final Function<EventExecutorGroup, Future<?>> shutdownProcedure;
 
     @VisibleForTesting
     public static DriftNettyMethodInvokerFactory<?> createStaticDriftNettyMethodInvokerFactory(DriftNettyClientConfig clientConfig, ByteBufAllocator allocator)
     {
-        return new DriftNettyMethodInvokerFactory<>(new DriftNettyConnectionFactoryConfig(), clientIdentity -> clientConfig, allocator);
+        return new DriftNettyMethodInvokerFactory<>(new DriftNettyConnectionFactoryConfig(),
+                clientIdentity -> clientConfig,
+                allocator,
+                // Enable fast shutdown for tests
+                x -> x.shutdownGracefully(0, 1, SECONDS));
     }
 
     public DriftNettyMethodInvokerFactory(
             DriftNettyConnectionFactoryConfig factoryConfig,
             Function<I, DriftNettyClientConfig> clientConfigurationProvider)
     {
-        this(factoryConfig, clientConfigurationProvider, ByteBufAllocator.DEFAULT);
+        this(factoryConfig, clientConfigurationProvider, ByteBufAllocator.DEFAULT, EventExecutorGroup::shutdownGracefully);
     }
 
     @VisibleForTesting
     public DriftNettyMethodInvokerFactory(
             DriftNettyConnectionFactoryConfig factoryConfig,
             Function<I, DriftNettyClientConfig> clientConfigurationProvider,
-            ByteBufAllocator allocator)
+            ByteBufAllocator allocator,
+            Function<EventExecutorGroup, Future<?>> shutdownProcedure)
     {
         this.factoryConfig = requireNonNull(factoryConfig, "factoryConfig is null");
 
@@ -95,6 +99,7 @@ public class DriftNettyMethodInvokerFactory<I>
         this.clientConfigurationProvider = requireNonNull(clientConfigurationProvider, "clientConfigurationProvider is null");
         this.sslContextFactory = createSslContextFactory(true, factoryConfig.getSslContextRefreshTime(), group);
         this.defaultSocksProxy = Optional.ofNullable(factoryConfig.getSocksProxy());
+        this.shutdownProcedure = requireNonNull(shutdownProcedure, "shutdownProcedure is null");
 
         connectionPoolMaintenanceExecutor = newSingleThreadScheduledExecutor(daemonThreadsNamed("drift-connection-maintenance"));
         connectionFactory = new ConnectionFactory(group, sslContextFactory, allocator, factoryConfig);
@@ -145,7 +150,7 @@ public class DriftNettyMethodInvokerFactory<I>
         finally {
             connectionPoolMaintenanceExecutor.shutdownNow();
             try {
-                group.shutdownGracefully().await();
+                shutdownProcedure.apply(group).await();
             }
             catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
