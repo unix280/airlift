@@ -62,7 +62,7 @@ jobs:
       - name: Prepare release
         run: |
           git reset --hard
-          mvn release:prepare -X -B -DreleaseVersion=${{ env.RELEASE_VERSION }} -DskipTests \
+          mvn release:prepare -B -DreleaseVersion=${{ env.RELEASE_VERSION }} -DskipTests \
                         -DautoVersionSubmodules=true \
                         -DgenerateBackupPoms=false
           grep -m 1 "<version>" pom.xml
