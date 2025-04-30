@@ -93,17 +93,12 @@ public class ReplicatedDynamicStore
 
     private Supplier<Set<Service>> servicesSupplier()
     {
-        return new Supplier<Set<Service>>()
-        {
-            @Override
-            public Set<Service> get()
-            {
-                ImmutableSet.Builder<Service> builder = ImmutableSet.builder();
-                for (Entry entry : store.getAll()) {
-                    builder.addAll(codec.fromJson(entry.getValue()));
-                }
-                return builder.build();
+        return () -> {
+            ImmutableSet.Builder<Service> builder = ImmutableSet.builder();
+            for (Entry entry : store.getAll()) {
+                builder.addAll(codec.fromJson(entry.getValue()));
             }
+            return builder.build();
         };
     }
 
@@ -112,6 +107,6 @@ public class ReplicatedDynamicStore
         if (ttl.toMillis() == 0) {
             return supplier;
         }
-        return memoizeWithExpiration((com.google.common.base.Supplier) supplier, ttl.toMillis(), MILLISECONDS);
+        return memoizeWithExpiration(supplier::get, ttl.toMillis(), MILLISECONDS);
     }
 }
