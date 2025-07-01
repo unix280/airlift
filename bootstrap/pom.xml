@@ -29,6 +29,7 @@
         <dependency>
             <groupId>com.facebook.airlift</groupId>
             <artifactId>configuration</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -39,6 +40,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -51,6 +53,12 @@
         <dependency>
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
             <scope>runtime</scope>
         </dependency>
 
