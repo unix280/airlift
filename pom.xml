@@ -30,6 +30,7 @@
         <dep.jetty.version>12.0.18</dep.jetty.version>
         <dep.jersey.version>4.0.0-M2</dep.jersey.version>
         <dep.drift.version>0.220-SNAPSHOT</dep.drift.version>
+        <dep.guice.version>6.0.0</dep.guice.version>
     </properties>
 
     <organization>
@@ -465,6 +466,12 @@
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet-core</artifactId>
                 <version>${dep.jersey.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
             </dependency>
 
             <dependency>
