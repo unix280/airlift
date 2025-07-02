@@ -14,7 +14,7 @@
     <parent>
         <groupId>com.facebook.airlift</groupId>
         <artifactId>airbase</artifactId>
-        <version>105</version>
+        <version>106</version>
     </parent>
 
     <inceptionYear>2010</inceptionYear>
@@ -554,17 +554,6 @@
                                 <arg>loopback</arg>
                             </gpgArguments>
                         </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy-to-ossrh</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
